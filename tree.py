@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-import sys
-import os
 from stack import *
 from branch import *
 from leaf import *

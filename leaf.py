@@ -2,22 +2,15 @@
 
 import sys
 import os
-import globalset
-
-def generate_UniqueName(fileName, path):
-  if os.path.exists(path + '/' + fileName):
-    fileName += '1'
-    return generate_UniqueName(fileName, path)
-  else:
-    return fileName
+from general import *
 
 class Leaf():
   def __init__(self, name=' ', text=''):
     self.name = name
     self.desc = ''
-    if not os.path.isdir(globalset.dataPath):
-      os.makedirs(globalset.dataPath)
-    self._path = globalset.dataPath + '/' + generate_UniqueName(name, globalset.dataPath)
+    if not os.path.isdir(dataPath):
+      os.makedirs(dataPath)
+    self._path = dataPath + '/' + generate_UniqueName(name, dataPath)
     self.write(text) 
   def read(self):
     fd = open(self._path, 'rb')
