@@ -1,23 +1,33 @@
 #!/usr/bin/env python
 
+from leaf import *
+
 class Branch():
   def __init__(self, name='branch'):
     self.name=name
-    self._issue=[]
+    self._children=[]
   def add(self, item):
-    self._issue.append(item)
+    self._children.append(item)
   def get(self, index=-1):
     if index == -1:
-      return self._issue
+      return self._children
     else:
-      return self._issue[index]
+      return self._children[index]
+  def _cleaner(self, item):
+    if isinstance(item, Branch):
+      if item.get() == []:
+        return
+      else:
+        for b_cur in item.get():
+          self._cleaner(b_cur)
+    if isinstance(item, Leaf):
+      item.prepare_del()
+      return
   def remove(self, index):
-    del self._issue[index]
+    self._cleaner(self._children[index])
+    del self._children[index]
   def __str__(self):
-    res = '%s:\n' % self.name
-    for i_cur in self._issue:
-      res += '  %s\n' % i_cur.name
-    return res
+    return self.name + ': (with ' + str(len(self._children)) + ' children)'
 
 if __name__ == '__main__':
   branch = Branch(name='branch')

@@ -8,21 +8,14 @@ from leaf import *
 
 def print_all(item, iterNum=0):
   indent='  '*iterNum
+  print str(indent) + str(item)
   if isinstance(item, Branch):
-    print '%s%s' % (indent, item.name)
     if item.get() == []:
       return
     else:
       iterNum += 1
       for b_cur in item.get():
         print_all(b_cur, iterNum)
-  else:
-    print '%s%s:\tdesc: "%s"' % (indent, item.name, item.desc)
-    print '%s  text:' % (indent)
-    print '______________________________'
-    print '%s\n' % (item.read())
-    print '______________________________'
-    return
 
 class Tree():
   def __init__(self, root=Branch(name='root')):
@@ -59,6 +52,7 @@ if __name__ == '__main__':
   print '\n\t Go up to branch1\n'
   tree.upTo(0)
   tree.curItem().add(Leaf('leaf2'))
+  tree.curItem().add(Leaf('leaf3'))
   tree.curItem().add(Branch('branch3'))
   print_all(tree.curItem())
 
@@ -74,9 +68,6 @@ if __name__ == '__main__':
 
   print '\n\t Remove leaf2\n'
   tree.upTo(0)
-  tree.upTo(0)
-  tree.curItem().prepare_del()
-  tree.down()
   tree.curItem().remove(0)
   tree.down()
   print_all(tree.curItem())

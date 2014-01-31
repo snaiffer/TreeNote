@@ -2,29 +2,22 @@
 
 import sys
 import os
+import globalset
 
-def isFileThere(fileName, path):
-  existents = os.listdir(path)
-  try:
-    existents.index(fileName)
-  except:
-    return False
-  else:
-    return True
-
-def generateGoodName(fileName, path):
-  if isFileThere(fileName, path):
+def generate_UniqueName(fileName, path):
+  if os.path.exists(path + '/' + fileName):
     fileName += '1'
-    return generateGoodName(fileName, path)
+    return generate_UniqueName(fileName, path)
   else:
     return fileName
 
 class Leaf():
-  _dataPath = './data'
   def __init__(self, name=' ', text=''):
     self.name = name
     self.desc = ''
-    self._path = self._dataPath + '/' + generateGoodName(name, self._dataPath)
+    if not os.path.isdir(globalset.dataPath):
+      os.makedirs(globalset.dataPath)
+    self._path = globalset.dataPath + '/' + generate_UniqueName(name, globalset.dataPath)
     self.write(text) 
   def read(self):
     fd = open(self._path, 'rb')
@@ -39,7 +32,7 @@ class Leaf():
   def prepare_del(self):
     os.remove(self._path)
   def __str__(self):
-    return 'Leaf:\n  name: %s\n  desc: %s' % (self.name, self.desc)
+    return self.name + '\t desc: "' + self.desc + '"\n\t____text____:\n' + self.read()
 
 
 if __name__ == '__main__':
@@ -57,6 +50,7 @@ if __name__ == '__main__':
   leaf1.write(test_str2)
   if leaf1.read() == test_str2:
     print 'PASS'
+  print leaf1  
 
   leaf1.prepare_del()
   leaf2.prepare_del()
