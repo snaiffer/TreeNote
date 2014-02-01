@@ -1,0 +1,42 @@
+
+<Branch>:
+  size_hint_y: None
+  height: 200
+
+<Leaf>:  
+  size_hint_y: None
+  height: 200
+  background_color: [1,0,1,1]
+
+<ContentLayout>:
+  cols: 1
+  spacing: 10
+  size_hint_y: None
+  height: self.minimum_height
+
+<MainScreen>:
+  BoxLayout:
+    orientation: 'vertical'
+    BoxLayout:
+      size_hint_y: 0.1
+      TextInput:
+        multiline: False
+      Button:
+        text: 'Add'
+        size_hint_x: 0.1
+    ScrollView:
+      size_hint: (1, 1)
+      do_scroll_x: False
+      ContentLayout:
+        Branch:
+          text: 'button_1'
+        Leaf:   
+          text: 'leaf_1'
+        Branch:
+          text: 'button_2'
+
+<LeafScreen>:
+  GridLayout:
+    cols: 1
+    Label:
+      text: 'itemScreen'
