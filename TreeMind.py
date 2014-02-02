@@ -30,17 +30,18 @@ tree.down()
 print_all(tree.curItem())
 
 class ButtonTreeItem(Button):
-  def __init__(self, num, content, **kwargs):
+  def __init__(self, num, **kwargs):
     super(ButtonTreeItem, self).__init__(**kwargs)
     self.size_hint_y = None
     self.num = num
-    self.content = content
 
 class ButtonBranch(ButtonTreeItem):
+  def __init__(self, content, **kwargs):
+    super(ButtonBranch, self).__init__(**kwargs)
+    self.content = content
   def on_press(self):
     global tree
     tree.upTo(self.num)
-    print 'on_press ButtonBranch ' + str(self.num)
     self.content.showTree()
     return super(ButtonBranch, self).on_press()
 
@@ -49,7 +50,6 @@ class ButtonLeaf(ButtonTreeItem):
     super(ButtonLeaf, self).__init__(**kwargs)
     self.background_color=[1,0,1,1]
   def on_press(self):
-    print 'on_press ButtonLeaf ' + str(self.num)
     return super(ButtonLeaf, self).on_press()
 
 class ContentScroll(ScrollView):
@@ -78,7 +78,7 @@ class ContentLayout(GridLayout):
       if isinstance(cur, Branch):
         self.add_widget(ButtonBranch(text=cur.name, num=counter, content = self))
       if isinstance(cur, Leaf):
-        self.add_widget(ButtonLeaf(text=cur.name, num=counter, content = self))
+        self.add_widget(ButtonLeaf(text=cur.name, num=counter))
       counter += 1  
 
   def add_newBranch(self, *args):
