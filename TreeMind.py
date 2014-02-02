@@ -50,6 +50,10 @@ class ButtonLeaf(ButtonTreeItem):
     super(ButtonLeaf, self).__init__(**kwargs)
     self.background_color=[1,0,1,1]
   def on_press(self):
+    global tree
+    tree.upTo(self.num)
+    print tree.curItem().name
+    sm.current = 'leafScreen'
     return super(ButtonLeaf, self).on_press()
 
 class ContentScroll(ScrollView):
@@ -98,47 +102,12 @@ class ContentLayout(GridLayout):
       tree.down()
       self.showTree()
 
-"""
-  def add_newItem(self, *args):
-    print 'Add NewItem'
-    if self.textField.text != '':
-      self.data.db.append(self.textField.text)
-      self.add_widget(Item(self.textField.text))
-      self.textField.text = ''
-
-  def add_Item(self, text):
-    print 'Add item'
-    self.add_widget(Item(text))
-
-  def find(self, instance, text):
-    print 'Find ' + text
-    if text == '':
-      self.showData(self.data.db)      
-    else:  
-      foundData = []
-      for cur in self.data.db:
-        try:
-          pos = cur.index(text)
-        except ValueError:
-          pass
-        else:
-          if pos == 0:
-            foundData.append(cur)
-      self.showData(foundData)      
-      print foundData
-
-  def showData(self, data):
-    self.clear_widgets()
-    for cur in data:
-      self.add_Item(cur)
-"""
-
 class MainLayout(GridLayout):
   def __init__(self, **kwargs):
     super(MainLayout, self).__init__(**kwargs)
     self.cols=1
 
-    # Top
+    # top
     buttonBack = Button(text='Back', size_hint_x=0.1)
     textField = TextInput(multiline=False, size_hint_x=0.8)
     buttonAddItem = Button(text='AddBranch', size_hint_x=0.1)
@@ -156,25 +125,58 @@ class MainLayout(GridLayout):
     buttonBack.bind(on_press=contentLayout.goBack)
     #textField.bind(text=contentLayout.find)
 
+class ButtonBack_fromLeaf(Button):
+  def on_press(self):
+    global tree
+    print 'goBack_fromLeaf'
+    if not tree.reachRoot():
+      tree.down()
+      sm.current = 'mainScreen'
 
-"""
-class MainScreen(Screen):
+class TextField(TextInput):
+  def save(self, *args):
+    global tree
+    tree.curItem().write(self.text)
+
+class LeafLayout(BoxLayout):
   def __init__(self, **kwargs):
-    super(MainScreen, self).__init__(**kwargs)
+    super(LeafLayout, self).__init__(**kwargs)
+    self.orientation = 'vertical'
+
+    global tree
+    # top
+    buttonBack = ButtonBack_fromLeaf(text='Back', size_hint_x=0.1)
+    capture = Label(text=tree.curItem().name, size_hint_x=0.9)
+    topLayout = BoxLayout(size_hint_y = 0.1)
+    topLayout.add_widget(buttonBack)
+    topLayout.add_widget(capture)
+    self.add_widget(topLayout) 
+    
+    # Content
+    textField = TextField(text=tree.curItem().read())
+    self.add_widget(textField) 
+    buttonBack.bind(on_press=textField.save)
 
 class LeafScreen(Screen):
-  pass
-
+  def on_pre_enter(self):
+    print 'pre_enter'
+    self.clear_widgets()
+    self.add_widget(LeafLayout())
+    
+    
 sm = ScreenManager()
-sm.add_widget(WelcomeScreen(name='WelcomeScreen'))
-sm.add_widget(MainScreen(name='MainScreen'))
-sm.add_widget(LeafScreen(name='LeafScreen'))
-"""
-
 
 class ScrollViewApp(App):
   def build(self):
-    return MainLayout()
+    mainScreen = Screen(name="mainScreen")
+    mainScreen.add_widget(MainLayout())
+
+    leafScreen = LeafScreen(name="leafScreen")
+#    leafScreen.add_widget(LeafLayout())
+
+    sm.add_widget(mainScreen)
+    sm.add_widget(leafScreen)
+    return sm
   def on_stop(self):
     pass
 
