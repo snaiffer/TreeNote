@@ -53,7 +53,6 @@ class ButtonLeaf(ButtonTreeItem):
   def on_press(self):
     global tree
     tree.upTo(self.num)
-    print tree.curItem().name
     sm.current = 'leafScreen'
     return super(ButtonLeaf, self).on_press()
 
@@ -101,9 +100,6 @@ class ContentLayout(GridLayout):
       tree.curItem().add(Leaf(name=self.textField.text))
       self.textField.text = ''
       self.showTree()
-
-  def goUp(self):
-    pass
 
   def goBack(self, *args):
     global tree
