@@ -3,6 +3,8 @@
 from stack import *
 from branch import *
 from leaf import *
+from xml.etree.ElementTree import *
+from general import *
 
 def print_all(item, iterNum=0):
   indent='  '*iterNum
@@ -34,6 +36,38 @@ class Tree():
       raise AchiveRoot
   def curItem(self):
     return self.__path.top()
+  def save(self):
+    xml_root = Element("root")
+    generate_XML(self.__root, xml_root)
+    ElementTree(xml_root).write(structureFile)
+
+  def restore(self):
+    pass
+
+def generate_XML(tree_curI, xml_curE):
+  if isinstance(tree_curI, Branch):
+    curE = Element('Branch', name=tree_curI.name)
+    xml_curE.append(curE)
+    if tree_curI.get() == []:
+      return
+    else:
+      for curI in tree_curI.get():
+        generate_XML(curI, curE)
+  if isinstance(tree_curI, Leaf):
+    curE = xml_curE.append(Element('Leaf', name=tree_curI.name, desc=tree_curI.desc, path=tree_curI._path))
+    return
+
+
+def print_all(item, iterNum=0):
+  indent='  '*iterNum
+  print str(indent) + str(item)
+  if isinstance(item, Branch):
+    if item.get() == []:
+      return
+    else:
+      iterNum += 1
+      for b_cur in item.get():
+        print_all(b_cur, iterNum)
 
 class TreeException(Exception):
   pass
@@ -73,5 +107,7 @@ if __name__ == '__main__':
   print '\n\t Remove branch1\n'
   tree.curItem().remove(0)
   print_all(tree.curItem())
+
+  tree.save()
 
 

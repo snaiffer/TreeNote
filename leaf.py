@@ -44,6 +44,7 @@ if __name__ == '__main__':
   if leaf1.read() == test_str2:
     print 'PASS'
   print leaf1  
+  print leaf1._path
 
   leaf1.prepare_del()
   leaf2.prepare_del()
