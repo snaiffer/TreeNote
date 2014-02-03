@@ -39,6 +39,7 @@ class ButtonBranch(ButtonTreeItem):
   def __init__(self, content, **kwargs):
     super(ButtonBranch, self).__init__(**kwargs)
     self.content = content
+    self.background_color=[1,0,0,1]
   def on_press(self):
     global tree
     tree.upTo(self.num)
@@ -48,7 +49,7 @@ class ButtonBranch(ButtonTreeItem):
 class ButtonLeaf(ButtonTreeItem):
   def __init__(self, **kwargs):
     super(ButtonLeaf, self).__init__(**kwargs)
-    self.background_color=[1,0,1,1]
+    self.background_color=[1,1,0,1]
   def on_press(self):
     global tree
     tree.upTo(self.num)
@@ -93,6 +94,14 @@ class ContentLayout(GridLayout):
       self.textField.text = ''
       self.showTree()
 
+  def add_newLeaf(self, *args):
+    global tree
+    print 'Add NewLeaf'
+    if self.textField.text != '':
+      tree.curItem().add(Leaf(name=self.textField.text))
+      self.textField.text = ''
+      self.showTree()
+
   def goUp(self):
     pass
 
@@ -109,19 +118,22 @@ class MainLayout(GridLayout):
 
     # top
     buttonBack = Button(text='Back', size_hint_x=0.1)
-    textField = TextInput(multiline=False, size_hint_x=0.8)
-    buttonAddItem = Button(text='AddBranch', size_hint_x=0.1)
+    textField = TextInput(multiline=False, size_hint_x=0.7)
+    buttonAddBranch = Button(text='AddBranch', size_hint_x=0.1)
+    buttonAddLeaf = Button(text='AddLeaf', size_hint_x=0.1)
     topLayout = BoxLayout(size_hint_y = 0.1)
     topLayout.add_widget(buttonBack)
     topLayout.add_widget(textField)
-    topLayout.add_widget(buttonAddItem)
+    topLayout.add_widget(buttonAddBranch)
+    topLayout.add_widget(buttonAddLeaf)
     self.add_widget(topLayout) 
     
     # Content
     contentLayout = ContentLayout(textField)
     scroll = ContentScroll(contentLayout)
     self.add_widget(scroll)
-    buttonAddItem.bind(on_press=contentLayout.add_newBranch)
+    buttonAddBranch.bind(on_press=contentLayout.add_newBranch)
+    buttonAddLeaf.bind(on_press=contentLayout.add_newLeaf)
     buttonBack.bind(on_press=contentLayout.goBack)
     #textField.bind(text=contentLayout.find)
 
