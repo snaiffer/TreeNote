@@ -4,21 +4,19 @@ from kivy.app import App
 
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.scrollview import ScrollView
-from kivy.uix.stacklayout import StackLayout
 from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.anchorlayout import AnchorLayout
 
 from kivy.uix.label import Label
 from kivy.uix.button import Button
 from kivy.uix.textinput import TextInput
 
-from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.properties import NumericProperty, ObjectProperty
 
 from tree import *
 
 tree = Tree()
+"""
 tree.curItem().add(Branch('branch1'))
 tree.curItem().add(Branch('branch2'))
 tree.curItem().add(Leaf('leaf1'))
@@ -28,6 +26,7 @@ tree.curItem().add(Leaf('leaf3'))
 tree.curItem().add(Branch('branch3'))
 tree.down()
 print_all(tree.curItem())
+"""
 
 class ButtonTreeItem(Button):
   def __init__(self, num, **kwargs):
@@ -175,7 +174,9 @@ class LeafScreen(Screen):
 sm = ScreenManager()
 
 class ScrollViewApp(App):
+  global tree
   def build(self):
+    tree.restore()
     mainScreen = Screen(name="mainScreen")
     mainScreen.add_widget(MainLayout())
 
@@ -186,6 +187,7 @@ class ScrollViewApp(App):
     sm.add_widget(leafScreen)
     return sm
   def on_stop(self):
+    tree.save()
     pass
 
 if __name__ == '__main__':

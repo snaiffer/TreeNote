@@ -42,10 +42,13 @@ class Tree():
     ElementTree(xml_tree).write(structureFile)
 
   def restore(self):
-    xml_tree = ElementTree(file=structureFile)
-    xml_root = xml_tree.getroot()
-    tree = self.__root
-    self.__restore_fromXML(tree, xml_root)
+    try:
+      xml_tree = ElementTree(file=structureFile)
+      xml_root = xml_tree.getroot()
+      tree = self.__root
+      self.__restore_fromXML(tree, xml_root)
+    except IOError:
+      pass
 
   def __generate_XML(self, tree_curI, xml_curE):
     if isinstance(tree_curI, Branch):
@@ -78,7 +81,6 @@ class AchiveRoot(TreeException):
 
 if __name__ == '__main__':
   tree = Tree()
-  """
   tree.restore()
   print_all(tree.curItem())
   """
@@ -115,3 +117,4 @@ if __name__ == '__main__':
   print_all(tree.curItem())
 
   tree.save()
+  """
