@@ -5,12 +5,15 @@ import os
 from general import *
 
 class Leaf():
-  def __init__(self, name=' ', text=''):
+  def __init__(self, name=' ', text='', desc='', path=' '):
     self.name = name
     self.desc = ''
     if not os.path.isdir(dataPath):
       os.makedirs(dataPath)
-    self._path = dataPath + '/' + generate_UniqueName(name, dataPath)
+    if path == ' ':  
+      self._path = dataPath + '/' + generate_UniqueName(name, dataPath)
+    else:
+      self._path = path
     self.write(text) 
   def read(self):
     fd = open(self._path, 'rb')
@@ -35,7 +38,7 @@ if __name__ == '__main__':
   leaf2 = Leaf('leaf2')
   if leaf1.read() == 'leaf1_text':
     print 'PASS'
-  if leaf2.read() == ' ':
+  if leaf2.read() == '':
     print 'PASS'
 
   test_str2 = 'New text'
@@ -44,7 +47,6 @@ if __name__ == '__main__':
   if leaf1.read() == test_str2:
     print 'PASS'
   print leaf1  
-  print leaf1._path
 
   leaf1.prepare_del()
   leaf2.prepare_del()

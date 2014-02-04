@@ -37,37 +37,37 @@ class Tree():
   def curItem(self):
     return self.__path.top()
   def save(self):
-    xml_root = Element("root")
-    generate_XML(self.__root, xml_root)
-    ElementTree(xml_root).write(structureFile)
+    xml_tree = Element("root")
+    self.__generate_XML(self.__root, xml_tree)
+    ElementTree(xml_tree).write(structureFile)
 
   def restore(self):
-    pass
+    xml_tree = ElementTree(file=structureFile)
+    xml_root = xml_tree.getroot()
+    tree = self.__root
+    self.__restore_fromXML(tree, xml_root)
 
-def generate_XML(tree_curI, xml_curE):
-  if isinstance(tree_curI, Branch):
-    curE = Element('Branch', name=tree_curI.name)
-    xml_curE.append(curE)
-    if tree_curI.get() == []:
+  def __generate_XML(self, tree_curI, xml_curE):
+    if isinstance(tree_curI, Branch):
+      curE = Element('Branch', name=tree_curI.name)
+      xml_curE.append(curE)
+      if tree_curI.get() == []:
+        return
+      else:
+        for curI in tree_curI.get():
+          self.__generate_XML(curI, curE)
+    if isinstance(tree_curI, Leaf):
+      curE = xml_curE.append(Element('Leaf', name=tree_curI.name, desc=tree_curI.desc, path=tree_curI._path))
       return
-    else:
-      for curI in tree_curI.get():
-        generate_XML(curI, curE)
-  if isinstance(tree_curI, Leaf):
-    curE = xml_curE.append(Element('Leaf', name=tree_curI.name, desc=tree_curI.desc, path=tree_curI._path))
-    return
 
-
-def print_all(item, iterNum=0):
-  indent='  '*iterNum
-  print str(indent) + str(item)
-  if isinstance(item, Branch):
-    if item.get() == []:
-      return
-    else:
-      iterNum += 1
-      for b_cur in item.get():
-        print_all(b_cur, iterNum)
+  def __restore_fromXML(self, tree_curI, xml_curE):
+    elements = [elem for elem in xml_curE]
+    for curE in elements:
+      if curE.tag == 'Branch':
+        curI = tree_curI.add(Branch(name=curE.get('name')))
+        self.__restore_fromXML(curI, curE)
+      if curE.tag == 'Leaf':
+        curI = tree_curI.add(Leaf(name=curE.get('name'), desc=curE.get('desc'), path=curE.get('path')))
 
 class TreeException(Exception):
   pass
@@ -76,6 +76,10 @@ class AchiveRoot(TreeException):
 
 if __name__ == '__main__':
   tree = Tree()
+  tree.restore()
+  print_all(tree.curItem())
+
+  """
   tree.curItem().add(Branch('branch1'))
   tree.curItem().add(Branch('branch2'))
   tree.curItem().add(Leaf('leaf1'))
@@ -109,5 +113,4 @@ if __name__ == '__main__':
   print_all(tree.curItem())
 
   tree.save()
-
-
+  """

@@ -8,6 +8,7 @@ class Branch():
     self._children=[]
   def add(self, item):
     self._children.append(item)
+    return self._children[-1]
   def get(self, index=-1):
     if index == -1:
       return self._children
@@ -35,7 +36,7 @@ if __name__ == '__main__':
   branch1.add(Branch(name='branch2'))
   branch1.add(Branch(name='branch3'))
   branch.add(branch1)
-  branch.add(Branch(name='branch4'))
+  addedB = branch.add(Branch(name='branch4'))
 
   print branch
   print '==================\n'
@@ -44,5 +45,7 @@ if __name__ == '__main__':
     print 'PASS'
   branch.remove(0)  
   if branch.get(0).name == 'branch4':
+    print 'PASS'
+  if addedB.name == 'branch4':
     print 'PASS'
 
