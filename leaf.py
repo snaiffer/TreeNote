@@ -14,7 +14,8 @@ class Leaf():
       self._path = dataPath + '/' + generate_UniqueName(name, dataPath)
     else:
       self._path = path
-    self.write(text) 
+    if not os.path.exists(self._path):
+      self.write(text) 
   def read(self):
     fd = open(self._path, 'rb')
     return fd.read()
