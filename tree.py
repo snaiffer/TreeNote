@@ -62,6 +62,8 @@ class Tree():
 
   def __restore_fromXML(self, tree_curI, xml_curE):
     elements = [elem for elem in xml_curE]
+    if xml_curE.tag == 'root':
+      elements = [elem for elem in elements[0]]
     for curE in elements:
       if curE.tag == 'Branch':
         curI = tree_curI.add(Branch(name=curE.get('name')))
@@ -76,9 +78,9 @@ class AchiveRoot(TreeException):
 
 if __name__ == '__main__':
   tree = Tree()
+  """
   tree.restore()
   print_all(tree.curItem())
-
   """
   tree.curItem().add(Branch('branch1'))
   tree.curItem().add(Branch('branch2'))
@@ -113,4 +115,3 @@ if __name__ == '__main__':
   print_all(tree.curItem())
 
   tree.save()
-  """
