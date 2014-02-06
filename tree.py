@@ -37,52 +37,59 @@ class Tree():
   def curItem(self):
     return self.__path.top()
   def save(self):
+    def generate_XML(tree_curI, xml_curE):
+      if isinstance(tree_curI, Branch):
+        curE = Element('Branch', name=tree_curI.name)
+        xml_curE.append(curE)
+        if tree_curI.get() == []:
+          return
+        else:
+          for curI in tree_curI.get():
+            generate_XML(curI, curE)
+      if isinstance(tree_curI, Leaf):
+        curE = xml_curE.append(Element('Leaf', name=tree_curI.name, desc=tree_curI.desc, path=tree_curI._path))
+        return
     xml_tree = Element("root")
-    self.__generate_XML(self.__root, xml_tree)
+    generate_XML(self.__root, xml_tree)
     ElementTree(xml_tree).write(structureFile)
 
   def restore(self):
+    def restore_fromXML(tree_curI, xml_curE):
+      elements = [elem for elem in xml_curE]
+      if xml_curE.tag == 'root':
+        elements = [elem for elem in elements[0]]
+      for curE in elements:
+        if curE.tag == 'Branch':
+          curI = tree_curI.add(Branch(name=curE.get('name')))
+          restore_fromXML(curI, curE)
+        if curE.tag == 'Leaf':
+          curI = tree_curI.add(Leaf(name=curE.get('name'), desc=curE.get('desc'), path=curE.get('path')))
     try:
       xml_tree = ElementTree(file=structureFile)
       xml_root = xml_tree.getroot()
       tree = self.__root
-      self.__restore_fromXML(tree, xml_root)
+      restore_fromXML(tree, xml_root)
     except IOError:
+      raise XMLfileNotfound
       pass
 
-  def __generate_XML(self, tree_curI, xml_curE):
-    if isinstance(tree_curI, Branch):
-      curE = Element('Branch', name=tree_curI.name)
-      xml_curE.append(curE)
-      if tree_curI.get() == []:
-        return
-      else:
-        for curI in tree_curI.get():
-          self.__generate_XML(curI, curE)
-    if isinstance(tree_curI, Leaf):
-      curE = xml_curE.append(Element('Leaf', name=tree_curI.name, desc=tree_curI.desc, path=tree_curI._path))
-      return
 
-  def __restore_fromXML(self, tree_curI, xml_curE):
-    elements = [elem for elem in xml_curE]
-    if xml_curE.tag == 'root':
-      elements = [elem for elem in elements[0]]
-    for curE in elements:
-      if curE.tag == 'Branch':
-        curI = tree_curI.add(Branch(name=curE.get('name')))
-        self.__restore_fromXML(curI, curE)
-      if curE.tag == 'Leaf':
-        curI = tree_curI.add(Leaf(name=curE.get('name'), desc=curE.get('desc'), path=curE.get('path')))
 
 class TreeException(Exception):
   pass
 class AchiveRoot(TreeException):
   pass
+class XMLfileNotfound(TreeException):
+  pass
 
 if __name__ == '__main__':
   tree = Tree()
-  tree.restore()
-  print_all(tree.curItem())
+  try:
+    tree.restore()
+    print_all(tree.curItem())
+  except XMLfileNotfound:
+    print "Error: XML file isn't found"
+
   """
   tree.curItem().add(Branch('branch1'))
   tree.curItem().add(Branch('branch2'))

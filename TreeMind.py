@@ -144,7 +144,7 @@ class TextField(TextInput):
   def save(self, *args):
     global tree
     tree.curItem().write(self.text)
-
+  
 class LeafLayout(BoxLayout):
   def __init__(self, **kwargs):
     super(LeafLayout, self).__init__(**kwargs)
@@ -176,12 +176,15 @@ sm = ScreenManager()
 class ScrollViewApp(App):
   global tree
   def build(self):
-    tree.restore()
+    try:
+      tree.restore()
+    except XMLfileNotfound:
+      pass
+
     mainScreen = Screen(name="mainScreen")
     mainScreen.add_widget(MainLayout())
 
     leafScreen = LeafScreen(name="leafScreen")
-#    leafScreen.add_widget(LeafLayout())
 
     sm.add_widget(mainScreen)
     sm.add_widget(leafScreen)
