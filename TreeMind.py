@@ -40,7 +40,6 @@ class ButtonBranch(ButtonTreeItem):
     self.content = content
     self.background_color=[1,0,0,1]
   def on_press(self):
-    global tree
     tree.upTo(self.num)
     self.content.showTree()
     return super(ButtonBranch, self).on_press()
@@ -50,7 +49,6 @@ class ButtonLeaf(ButtonTreeItem):
     super(ButtonLeaf, self).__init__(**kwargs)
     self.background_color=[1,1,0,1]
   def on_press(self):
-    global tree
     tree.upTo(self.num)
     sm.current = 'leafScreen'
     return super(ButtonLeaf, self).on_press()
@@ -74,7 +72,6 @@ class ContentLayout(GridLayout):
     self.showTree()
 
   def showTree(self):  
-    global tree
     self.clear_widgets()
     counter = 0
     for cur in tree.curItem().get():
@@ -85,7 +82,6 @@ class ContentLayout(GridLayout):
       counter += 1  
 
   def add_newBranch(self, *args):
-    global tree
     print 'Add NewBranch'
     if self.textField.text != '':
       tree.curItem().add(Branch(name=self.textField.text))
@@ -93,7 +89,6 @@ class ContentLayout(GridLayout):
       self.showTree()
 
   def add_newLeaf(self, *args):
-    global tree
     print 'Add NewLeaf'
     if self.textField.text != '':
       tree.curItem().add(Leaf(name=self.textField.text))
@@ -101,7 +96,6 @@ class ContentLayout(GridLayout):
       self.showTree()
 
   def goBack(self, *args):
-    global tree
     if not tree.reachRoot():
       tree.down()
       self.showTree()
@@ -134,7 +128,6 @@ class MainLayout(GridLayout):
 
 class ButtonBack_fromLeaf(Button):
   def on_press(self):
-    global tree
     print 'goBack_fromLeaf'
     if not tree.reachRoot():
       tree.down()
@@ -142,7 +135,6 @@ class ButtonBack_fromLeaf(Button):
 
 class TextField(TextInput):
   def save(self, *args):
-    global tree
     tree.curItem().write(self.text)
   
 class LeafLayout(BoxLayout):
@@ -150,7 +142,6 @@ class LeafLayout(BoxLayout):
     super(LeafLayout, self).__init__(**kwargs)
     self.orientation = 'vertical'
 
-    global tree
     # top
     buttonBack = ButtonBack_fromLeaf(text='Back', size_hint_x=0.1)
     capture = Label(text=tree.curItem().name, size_hint_x=0.9)
@@ -174,7 +165,6 @@ class LeafScreen(Screen):
 sm = ScreenManager()
 
 class ScrollViewApp(App):
-  global tree
   def build(self):
     try:
       tree.restore()
