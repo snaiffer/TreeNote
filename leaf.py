@@ -16,11 +16,11 @@ class Leaf():
       self.write(text) 
   def read(self):
     fd = open(self._path, 'rb')
-    return fd.read().decode('utf-8')
+    return fd.read().decode('utf-8', 'xmlcharrefreplace')
   def write(self, text):
     fd = open(self._path, 'wb')
     try:
-      fd.write(text.encode('utf-8'))
+      fd.write(text.encode('utf-8', 'xmlcharrefreplace'))
       self.desc = text[:15]
     finally:  
       fd.close()
