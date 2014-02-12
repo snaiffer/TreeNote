@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-import sys
-import os
 from general import *
 
 class Leaf():
@@ -18,11 +16,11 @@ class Leaf():
       self.write(text) 
   def read(self):
     fd = open(self._path, 'rb')
-    return fd.read()
+    return fd.read().decode('utf-8')
   def write(self, text):
     fd = open(self._path, 'wb')
     try:
-      fd.write(text)
+      fd.write(text.encode('utf-8'))
       self.desc = text[:15]
     finally:  
       fd.close()
