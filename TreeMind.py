@@ -5,6 +5,7 @@ from kivy.app import App
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.floatlayout import FloatLayout
 
 from kivy.uix.label import Label
 from kivy.uix.button import Button
@@ -30,6 +31,11 @@ tree.down()
 print_all(tree.curItem())
 """
 
+class MainScreen(Screen):
+  def on_pre_enter(self):
+    print 'pre_enter'
+    contentLayout.showTree()
+    
 class ButtonTreeItem(Button):
   def __init__(self, num, **kwargs):
     super(ButtonTreeItem, self).__init__(**kwargs)
@@ -64,9 +70,8 @@ class ContentScroll(ScrollView):
     self.add_widget(layout)
 
 class ContentLayout(GridLayout):
-  def __init__(self, textField, **kwargs):
+  def __init__(self, **kwargs):
     super(ContentLayout, self).__init__(**kwargs)
-    self.textField = textField
     self.cols = 1
     self.padding = 10
     self.spacing = 10
@@ -90,17 +95,22 @@ class ContentLayout(GridLayout):
 
   def add_newBranch(self, *args):
     print 'Add NewBranch'
+    """
     if self.textField.text != '':
       tree.curItem().add(Branch(name=self.textField.text))
       self.textField.text = ''
       self.showTree()
+    """
 
   def add_newLeaf(self, *args):
     print 'Add NewLeaf'
+
+    """
     if self.textField.text != '':
       tree.curItem().add(Leaf(name=self.textField.text))
       self.textField.text = ''
       self.showTree()
+    """
 
   def goBack(self, *args):
     if not tree.reachRoot():
@@ -129,6 +139,8 @@ class ContentLayout(GridLayout):
 
   def close_menu(self, widget, *args):
     self.remove_widget(widget)
+
+contentLayout = ContentLayout()    
 
 """
   def build(self):
@@ -166,7 +178,7 @@ class MainLayout(GridLayout):
     self.add_widget(topLayout) 
     
     # Content
-    contentLayout = ContentLayout(textField)
+    #contentLayout = ContentLayout(textField)
     scroll = ContentScroll(contentLayout)
     self.add_widget(scroll)
     buttonAddBranch.bind(on_press=contentLayout.add_newBranch)
@@ -174,35 +186,31 @@ class MainLayout(GridLayout):
     buttonBack.bind(on_press=contentLayout.goBack)
     #textField.bind(text=contentLayout.find)
 
-class ButtonBack_fromLeaf(Button):
-  def on_press(self):
-    print 'goBack_fromLeaf'
-    if not tree.reachRoot():
-      tree.down()
-      sm.transition = SlideTransition(direction='right')
-      sm.current = 'mainScreen'
-
-class TextField(TextInput):
-  def save(self, *args):
-    tree.curItem().write(self.text)
-  
 class LeafLayout(BoxLayout):
   def __init__(self, **kwargs):
     super(LeafLayout, self).__init__(**kwargs)
     self.orientation = 'vertical'
 
     # top
-    buttonBack = ButtonBack_fromLeaf(text='Back', size_hint_x=0.1)
+    buttonBack = Button(text='Back', size_hint_x=0.1)
     capture = Label(text=tree.curItem().name, size_hint_x=0.9)
     topLayout = BoxLayout(size_hint_y = 0.1)
     topLayout.add_widget(buttonBack)
     topLayout.add_widget(capture)
     self.add_widget(topLayout) 
+    buttonBack.bind(on_press=self.back)
     
     # Content
-    textField = TextField(text=tree.curItem().read())
-    self.add_widget(textField) 
-    buttonBack.bind(on_press=textField.save)
+    self.textField = TextInput(text=tree.curItem().read())
+    self.add_widget(self.textField) 
+
+  def back(self, *args):
+    tree.curItem().write(self.textField.text)
+    print 'goBack_fromLeaf'
+    if not tree.reachRoot():
+      tree.down()
+      sm.transition = SlideTransition(direction='right')
+      sm.current = 'mainScreen'
 
 class LeafScreen(Screen):
   def on_pre_enter(self):
@@ -211,32 +219,62 @@ class LeafScreen(Screen):
     self.add_widget(LeafLayout())
     
 
-class ButtonBack_fromAdd(Button):
-  def on_press(self):
+class AddLayout(FloatLayout):
+  def __init__(self, **kwargs):
+    super(AddLayout, self).__init__(**kwargs)
+    buttonBack = Button(text='back', pos_hint={'y': 0.9},  size_hint=(0.2,0.1))
+    self.add_widget(buttonBack)
+    buttonBack.bind(on_press=self.back)
+
+    mainLayout = BoxLayout(
+        padding = 10,
+        spacing = 10,
+        pos_hint = {'center_x': 0.5, 'center_y': 0.5}, 
+        size_hint = (0.7, 0.8), 
+        orientation = 'vertical')
+    mainLayout.add_widget(Label(text='Add:'))
+    inputField = BoxLayout()
+    inputField.add_widget(Label(text='name: ', size_hint_x=0.1))
+    self.textField = TextInput(multiline=False)
+    inputField.add_widget(self.textField)
+    mainLayout.add_widget(inputField)
+    buttonAddBranch = Button(text='Add Branch')
+    buttonAddLeaf = Button(text='Add Leaf')
+    mainLayout.add_widget(buttonAddBranch)
+    mainLayout.add_widget(buttonAddLeaf)
+    buttonAddBranch.bind(on_press=self.addBranch)
+    buttonAddLeaf.bind(on_press=self.addLeaf)
+
+    self.add_widget(mainLayout)
+    
+  def addBranch(self, *args):
+    print 'Add NewBranch'
+    if self.textField.text != '':
+      tree.curItem().add(Branch(name=self.textField.text))
+      self.textField.text = ''
+      self.back()  
+
+  def addLeaf(self, *args):
+    print 'Add NewLeaf'
+    if self.textField.text != '':
+      tree.curItem().add(Leaf(name=self.textField.text))
+      self.textField.text = ''
+      self.back()  
+
+  def back(self, *args):
     sm.transition = FadeTransition()
     sm.current = 'mainScreen'
 
-class AddLayout(BoxLayout):
-  def __init__(self, **kwargs):
-    super(AddLayout, self).__init__(**kwargs)
-    self.size_hint = (0.7, 0.8)
-    self.orientation = 'vertical'
-    
-    self.add_widget(ButtonBack_fromAdd(text='back'))
-    self.add_widget(Button(text='Add Branch'))
-    self.add_widget(Button(text='Add Leaf'))
-    
-
 sm = ScreenManager() 
 
-class ScrollViewApp(App):
+class TreeNoteApp(App):
   def build(self):
     try:
       tree.restore()
     except XMLfileNotfound:
       pass
 
-    mainScreen = Screen(name="mainScreen")
+    mainScreen = MainScreen(name="mainScreen")
     mainScreen.add_widget(MainLayout())
 
     leafScreen = LeafScreen(name="leafScreen")
@@ -254,5 +292,5 @@ class ScrollViewApp(App):
     pass
 
 if __name__ == '__main__':
-    ScrollViewApp().run()
+    TreeNoteApp().run()
 
