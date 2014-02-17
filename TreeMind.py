@@ -186,10 +186,11 @@ class MainLayout(GridLayout):
     buttonBack.bind(on_press=contentLayout.goBack)
     #textField.bind(text=contentLayout.find)
 
-class LeafLayout(BoxLayout):
-  def __init__(self, **kwargs):
-    super(LeafLayout, self).__init__(**kwargs)
-    self.orientation = 'vertical'
+class LeafScreen(Screen):
+  def on_pre_enter(self):
+    self.clear_widgets()
+    
+    leafLayout = BoxLayout(orientation = 'vertical')
 
     # top
     buttonBack = Button(text='Back', size_hint_x=0.1)
@@ -197,27 +198,21 @@ class LeafLayout(BoxLayout):
     topLayout = BoxLayout(size_hint_y = 0.1)
     topLayout.add_widget(buttonBack)
     topLayout.add_widget(capture)
-    self.add_widget(topLayout) 
+    leafLayout.add_widget(topLayout) 
     buttonBack.bind(on_press=self.back)
     
     # Content
     self.textField = TextInput(text=tree.curItem().read())
-    self.add_widget(self.textField) 
+    leafLayout.add_widget(self.textField) 
+
+    self.add_widget(leafLayout)
 
   def back(self, *args):
     tree.curItem().write(self.textField.text)
-    print 'goBack_fromLeaf'
     if not tree.reachRoot():
       tree.down()
       sm.transition = SlideTransition(direction='right')
       sm.current = 'mainScreen'
-
-class LeafScreen(Screen):
-  def on_pre_enter(self):
-    print 'pre_enter'
-    self.clear_widgets()
-    self.add_widget(LeafLayout())
-    
 
 class AddLayout(FloatLayout):
   def __init__(self, **kwargs):
