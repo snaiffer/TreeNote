@@ -1,5 +1,16 @@
 #!/usr/bin/env python
 
+from tree import *
+tree = Tree()
+
+"""
+from kivy.config import Config
+Config.set('graphics', 'fullscreen', '0')
+Config.set('graphics', 'width', '500')
+Config.set('graphics', 'height', '700')
+#Config.set('kivy', 'window_icon', './icon.png')
+"""
+
 from kivy.app import App
 
 from kivy.uix.gridlayout import GridLayout
@@ -16,9 +27,8 @@ from kivy.properties import NumericProperty, ObjectProperty
 from kivy.clock import Clock
 from functools import partial
 
-from tree import *
 
-tree = Tree()
+
 """
 tree.curItem().add(Branch('branch1'))
 tree.curItem().add(Branch('branch2'))
