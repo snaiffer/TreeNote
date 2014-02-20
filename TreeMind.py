@@ -41,11 +41,6 @@ tree.down()
 print_all(tree.curItem())
 """
 
-class MainScreen(Screen):
-  def on_pre_enter(self):
-    print 'pre_enter'
-    contentLayout.showTree()
-    
 class ButtonTreeItem(Button):
   def __init__(self, num, **kwargs):
     super(ButtonTreeItem, self).__init__(**kwargs)
@@ -72,12 +67,18 @@ class ButtonLeaf(ButtonTreeItem):
     sm.current = 'leafScreen'
     return super(ButtonLeaf, self).on_press()
 
-class ContentScroll(ScrollView):
-  def __init__(self, layout, **kwargs):
-    super(ContentScroll, self).__init__(**kwargs)
-    self.size_hint=(1,1)
-    self.do_scroll_x=False
-    self.add_widget(layout)
+
+
+
+class MainScreen(Screen):
+  """
+  def __init__(self, **kwargs):
+    super(MainScreen, self).__init__(**kwargs)
+  """
+  def on_pre_enter(self):
+    print 'pre_enter'
+    contentLayout.showTree()
+    
 
 class ContentLayout(GridLayout):
   def __init__(self, **kwargs):
@@ -89,10 +90,6 @@ class ContentLayout(GridLayout):
     self.bind(minimum_height=self.setter('height'))  # for scrolling
     self.showTree()
 
-    self.bind(
-      on_touch_down=self.create_clock,
-      on_touch_up=self.delete_clock)
-
   def showTree(self):  
     self.clear_widgets()
     counter = 0
@@ -103,70 +100,13 @@ class ContentLayout(GridLayout):
         self.add_widget(ButtonLeaf(text=cur.name, num=counter))
       counter += 1  
 
-  def add_newBranch(self, *args):
-    print 'Add NewBranch'
-    """
-    if self.textField.text != '':
-      tree.curItem().add(Branch(name=self.textField.text))
-      self.textField.text = ''
-      self.showTree()
-    """
-
-  def add_newLeaf(self, *args):
-    print 'Add NewLeaf'
-
-    """
-    if self.textField.text != '':
-      tree.curItem().add(Leaf(name=self.textField.text))
-      self.textField.text = ''
-      self.showTree()
-    """
-
   def goBack(self, *args):
     if not tree.reachRoot():
       tree.down()
       self.showTree()
 
-  def create_clock(self, widget, touch, *args):
-    callback = partial(self.menu, touch)
-    Clock.schedule_once(callback, 0.4)
-    touch.ud['event'] = callback
-
-  def delete_clock(self, widget, touch, *args):
-    Clock.unschedule(touch.ud['event'])
-
-  def menu(self, touch, *args):
-    menu = BoxLayout(
-        size_hint=(None, None),
-        orientation='vertical',
-        center=touch.pos)
-    menu.add_widget(Button(text='a'))
-    menu.add_widget(Button(text='b'))
-    close = Button(text='close')
-    close.bind(on_release=partial(self.close_menu, menu))
-    menu.add_widget(close)
-    self.add_widget(menu)
-
-  def close_menu(self, widget, *args):
-    self.remove_widget(widget)
-
 contentLayout = ContentLayout()    
 
-"""
-  def build(self):
-    self.root = FloatLayout()
-    self.root.bind(
-      on_touch_down=self.create_clock,
-      on_touch_up=self.delete_clock)
-"""
-
-class ButtonAdd(Button):
-  def __init__(self, **kwargs):
-    super(ButtonAdd, self).__init__(**kwargs)
-  def on_press(self):
-    sm.transition = FadeTransition() #duration=0.8)
-    sm.current = 'addScreen'
-    return super(ButtonAdd, self).on_press()
 
 class MainLayout(GridLayout):
   def __init__(self, **kwargs):
@@ -175,26 +115,23 @@ class MainLayout(GridLayout):
 
     # top
     buttonBack = Button(text='Back', size_hint_x=0.1)
-    textField = TextInput(multiline=False, size_hint_x=0.6)
-    buttonAddBranch = Button(text='AddBranch', size_hint_x=0.1)
-    buttonAddLeaf = Button(text='AddLeaf', size_hint_x=0.1)
-    buttonAdd = ButtonAdd(text='+', size_hint_x=0.1)
+    buttonAdd = Button(text='+', size_hint_x=0.1)
     topLayout = BoxLayout(size_hint_y = 0.1)
     topLayout.add_widget(buttonBack)
-    topLayout.add_widget(textField)
-    topLayout.add_widget(buttonAddBranch)
-    topLayout.add_widget(buttonAddLeaf)
     topLayout.add_widget(buttonAdd)
     self.add_widget(topLayout) 
+    buttonAdd.bind(on_press=self.goTo_addLayout)
     
     # Content
-    #contentLayout = ContentLayout(textField)
-    scroll = ContentScroll(contentLayout)
+    scroll = ScrollView(size_hint=(1,1), do_scroll_x=False)
+    scroll.add_widget(contentLayout)
     self.add_widget(scroll)
-    buttonAddBranch.bind(on_press=contentLayout.add_newBranch)
-    buttonAddLeaf.bind(on_press=contentLayout.add_newLeaf)
     buttonBack.bind(on_press=contentLayout.goBack)
-    #textField.bind(text=contentLayout.find)
+
+  def goTo_addLayout(self, *args):
+    sm.transition = FadeTransition() #duration=0.8)
+    sm.current = 'addScreen'
+    
 
 class LeafScreen(Screen):
   def on_pre_enter(self):
