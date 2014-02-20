@@ -48,13 +48,11 @@ class ButtonTreeItem(Button):
     self.num = num
 
 class ButtonBranch(ButtonTreeItem):
-  def __init__(self, content, **kwargs):
+  def __init__(self, **kwargs):
     super(ButtonBranch, self).__init__(**kwargs)
-    self.content = content
     self.background_color=[1,0,0,1]
   def on_press(self):
     tree.upTo(self.num)
-    self.content.showTree()
     return super(ButtonBranch, self).on_press()
 
 class ButtonLeaf(ButtonTreeItem):
@@ -71,47 +69,9 @@ class ButtonLeaf(ButtonTreeItem):
 
 
 class MainScreen(Screen):
-  """
   def __init__(self, **kwargs):
     super(MainScreen, self).__init__(**kwargs)
-  """
-  def on_pre_enter(self):
-    print 'pre_enter'
-    contentLayout.showTree()
-    
-
-class ContentLayout(GridLayout):
-  def __init__(self, **kwargs):
-    super(ContentLayout, self).__init__(**kwargs)
-    self.cols = 1
-    self.padding = 10
-    self.spacing = 10
-    self.size_hint_y = None
-    self.bind(minimum_height=self.setter('height'))  # for scrolling
-    self.showTree()
-
-  def showTree(self):  
-    self.clear_widgets()
-    counter = 0
-    for cur in tree.curItem().get():
-      if isinstance(cur, Branch):
-        self.add_widget(ButtonBranch(text=cur.name, num=counter, content = self))
-      if isinstance(cur, Leaf):
-        self.add_widget(ButtonLeaf(text=cur.name, num=counter))
-      counter += 1  
-
-  def goBack(self, *args):
-    if not tree.reachRoot():
-      tree.down()
-      self.showTree()
-
-contentLayout = ContentLayout()    
-
-
-class MainLayout(GridLayout):
-  def __init__(self, **kwargs):
-    super(MainLayout, self).__init__(**kwargs)
-    self.cols=1
+    mainLayout = GridLayout(cols=1)
 
     # top
     buttonBack = Button(text='Back', size_hint_x=0.1)
@@ -119,14 +79,38 @@ class MainLayout(GridLayout):
     topLayout = BoxLayout(size_hint_y = 0.1)
     topLayout.add_widget(buttonBack)
     topLayout.add_widget(buttonAdd)
-    self.add_widget(topLayout) 
+    mainLayout.add_widget(topLayout) 
     buttonAdd.bind(on_press=self.goTo_addLayout)
     
     # Content
     scroll = ScrollView(size_hint=(1,1), do_scroll_x=False)
-    scroll.add_widget(contentLayout)
-    self.add_widget(scroll)
-    buttonBack.bind(on_press=contentLayout.goBack)
+    self.contentLayout = GridLayout(cols = 1, padding = 10, spacing = 10, size_hint_y = None)
+    self.contentLayout.bind(minimum_height=self.contentLayout.setter('height'))  # for scrolling
+    scroll.add_widget(self.contentLayout)
+    mainLayout.add_widget(scroll)
+    buttonBack.bind(on_press=self.goBack)
+    self.showTree()
+
+    self.add_widget(mainLayout)
+
+  def on_pre_enter(self):
+    print 'pre_enter'
+    self.showTree()
+    
+  def showTree(self):  
+    self.contentLayout.clear_widgets()
+    counter = 0
+    for cur in tree.curItem().get():
+      if isinstance(cur, Branch):
+        self.contentLayout.add_widget(ButtonBranch(text=cur.name, num=counter))
+      if isinstance(cur, Leaf):
+        self.contentLayout.add_widget(ButtonLeaf(text=cur.name, num=counter))
+      counter += 1  
+
+  def goBack(self, *args):
+    if not tree.reachRoot():
+      tree.down()
+      self.showTree()
 
   def goTo_addLayout(self, *args):
     sm.transition = FadeTransition() #duration=0.8)
@@ -217,7 +201,7 @@ class TreeNoteApp(App):
       pass
 
     mainScreen = MainScreen(name="mainScreen")
-    mainScreen.add_widget(MainLayout())
+    #mainScreen.add_widget(MainLayout())
 
     leafScreen = LeafScreen(name="leafScreen")
 
