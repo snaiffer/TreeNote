@@ -14,9 +14,10 @@ Config.set('graphics', 'height', '700')
 from kivy.app import App
 
 from kivy.uix.gridlayout import GridLayout
-from kivy.uix.scrollview import ScrollView
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.floatlayout import FloatLayout
+from kivy.uix.scrollview import ScrollView
+from kivy.uix.modalview import ModalView
 
 from kivy.uix.label import Label
 from kivy.uix.button import Button
@@ -25,7 +26,6 @@ from kivy.uix.textinput import TextInput
 from kivy.uix.screenmanager import ScreenManager, Screen, WipeTransition, FadeTransition , SlideTransition
 from kivy.properties import NumericProperty, ObjectProperty
 from kivy.clock import Clock
-from functools import partial
 
 
 
@@ -46,6 +46,42 @@ class ButtonTreeItem(Button):
     super(ButtonTreeItem, self).__init__(**kwargs)
     self.size_hint_y = None
     self.num = num
+    self.context = False
+
+  def on_touch_down(self, touch):
+    if self.collide_point(*touch.pos):
+      self.create_clock()
+    return super(ButtonTreeItem, self).on_touch_down(touch) 
+
+  def on_touch_up(self, touch):
+    if self.collide_point(*touch.pos):
+      self.delete_clock()
+      if self.context :
+        self.context = False
+        return True 
+    return super(ButtonTreeItem, self).on_touch_up(touch) 
+
+  def create_clock(self, *args):
+    Clock.schedule_once(self.contextMenu, 0.4)
+
+  def delete_clock(self, *args):
+    Clock.unschedule(self.contextMenu)
+
+  def contextMenu(self, *args):
+    self.context = True
+    contextMenu = ModalView(size_hint=(0.5, 0.5))
+    #contextMenu.bind(on_dismiss=self.test)
+    contextLayout = BoxLayout(orientation='vertical')
+    contextLayout.add_widget(Label(text=self.text))
+    btnDelete = Button(text='delete')
+    btnDelete.bind(on_press=tree.curItem().remove(self.num))
+    btnDelete.bind(on_press=contextMenu.dismiss)
+    contextLayout.add_widget(btnDelete)
+    close = Button(text='close')
+    close.bind(on_release=contextMenu.dismiss)
+    contextLayout.add_widget(close)
+    contextMenu.add_widget(contextLayout)
+    contextMenu.open()
 
 class ButtonBranch(ButtonTreeItem):
   def __init__(self, **kwargs):
@@ -58,11 +94,10 @@ class ButtonLeaf(ButtonTreeItem):
   def __init__(self, **kwargs):
     super(ButtonLeaf, self).__init__(**kwargs)
     self.background_color=[1,1,0,1]
-  def on_press(self):
+  def on_release(self):
     tree.upTo(self.num)
     sm.transition = SlideTransition(direction='left')
     sm.current = 'leafScreen'
-    return super(ButtonLeaf, self).on_press()
 
 class MainScreen(Screen):
   def __init__(self, **kwargs):
@@ -97,8 +132,9 @@ class MainScreen(Screen):
     for cur in tree.curItem().get():
       if isinstance(cur, Branch):
         buttonBranch = ButtonBranch(text=cur.name, num=counter)
-        buttonBranch.bind(on_press=buttonBranch.goHere)
-        buttonBranch.bind(on_press=self.showTree)
+        buttonBranch.bind(on_release=buttonBranch.goHere)
+        buttonBranch.bind(on_release=self.showTree)
+        #buttonBranch.bind(on_touch_down=self.showTree)
         self.contentLayout.add_widget(buttonBranch)
       if isinstance(cur, Leaf):
         self.contentLayout.add_widget(ButtonLeaf(text=cur.name, num=counter))
