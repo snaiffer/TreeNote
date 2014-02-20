@@ -134,7 +134,7 @@ class MainScreen(Screen):
         buttonBranch = ButtonBranch(text=cur.name, num=counter)
         buttonBranch.bind(on_release=buttonBranch.goHere)
         buttonBranch.bind(on_release=self.showTree)
-        #buttonBranch.bind(on_touch_down=self.showTree)
+        buttonBranch.bind(on_touch_up=self.showTree)
         self.contentLayout.add_widget(buttonBranch)
       if isinstance(cur, Leaf):
         self.contentLayout.add_widget(ButtonLeaf(text=cur.name, num=counter))
