@@ -64,14 +64,11 @@ class ButtonLeaf(ButtonTreeItem):
     sm.current = 'leafScreen'
     return super(ButtonLeaf, self).on_press()
 
-
-
-
 class MainScreen(Screen):
   def __init__(self, **kwargs):
     super(MainScreen, self).__init__(**kwargs)
-    mainLayout = GridLayout(cols=1)
 
+    mainLayout = GridLayout(cols=1)
     # top
     buttonBack = Button(text='Back', size_hint_x=0.1)
     buttonAdd = Button(text='+', size_hint_x=0.1)
@@ -80,7 +77,6 @@ class MainScreen(Screen):
     topLayout.add_widget(buttonAdd)
     mainLayout.add_widget(topLayout) 
     buttonAdd.bind(on_press=self.goTo_addLayout)
-    
     # Content
     scroll = ScrollView(size_hint=(1,1), do_scroll_x=False)
     self.contentLayout = GridLayout(cols = 1, padding = 10, spacing = 10, size_hint_y = None)
@@ -88,12 +84,11 @@ class MainScreen(Screen):
     scroll.add_widget(self.contentLayout)
     mainLayout.add_widget(scroll)
     buttonBack.bind(on_press=self.goBack)
-    self.showTree()
 
     self.add_widget(mainLayout)
+    self.showTree()
 
   def on_pre_enter(self, *args):
-    print 'pre_enter'
     self.showTree()
     
   def showTree(self, *args):  
@@ -117,7 +112,6 @@ class MainScreen(Screen):
   def goTo_addLayout(self, *args):
     sm.transition = FadeTransition() #duration=0.8)
     sm.current = 'addScreen'
-    
 
 class LeafScreen(Screen):
   def on_pre_enter(self):
@@ -203,10 +197,7 @@ class TreeNoteApp(App):
       pass
 
     mainScreen = MainScreen(name="mainScreen")
-    #mainScreen.add_widget(MainLayout())
-
     leafScreen = LeafScreen(name="leafScreen")
-
     addScreen = Screen(name='addScreen')
     addScreen.add_widget(AddLayout())
 
