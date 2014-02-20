@@ -51,9 +51,8 @@ class ButtonBranch(ButtonTreeItem):
   def __init__(self, **kwargs):
     super(ButtonBranch, self).__init__(**kwargs)
     self.background_color=[1,0,0,1]
-  def on_press(self):
+  def goHere(self, *args):  
     tree.upTo(self.num)
-    return super(ButtonBranch, self).on_press()
 
 class ButtonLeaf(ButtonTreeItem):
   def __init__(self, **kwargs):
@@ -93,16 +92,19 @@ class MainScreen(Screen):
 
     self.add_widget(mainLayout)
 
-  def on_pre_enter(self):
+  def on_pre_enter(self, *args):
     print 'pre_enter'
     self.showTree()
     
-  def showTree(self):  
+  def showTree(self, *args):  
     self.contentLayout.clear_widgets()
     counter = 0
     for cur in tree.curItem().get():
       if isinstance(cur, Branch):
-        self.contentLayout.add_widget(ButtonBranch(text=cur.name, num=counter))
+        buttonBranch = ButtonBranch(text=cur.name, num=counter)
+        buttonBranch.bind(on_press=buttonBranch.goHere)
+        buttonBranch.bind(on_press=self.showTree)
+        self.contentLayout.add_widget(buttonBranch)
       if isinstance(cur, Leaf):
         self.contentLayout.add_widget(ButtonLeaf(text=cur.name, num=counter))
       counter += 1  
