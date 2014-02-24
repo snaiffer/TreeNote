@@ -101,7 +101,7 @@ class MainScreen(Screen):
     topLayout.add_widget(buttonBack)
     topLayout.add_widget(buttonAdd)
     mainLayout.add_widget(topLayout) 
-    buttonAdd.bind(on_press=self.goTo_addLayout)
+    buttonAdd.bind(on_press=self.addMenu)
     # Content
     scroll = ScrollView(size_hint=(1,1), do_scroll_x=False)
     self.contentLayout = GridLayout(cols = 1, padding = 10, spacing = 10, size_hint_y = None)
@@ -134,9 +134,46 @@ class MainScreen(Screen):
       tree.down()
       self.showTree()
 
-  def goTo_addLayout(self, *args):
-    sm.transition = FadeTransition() #duration=0.8)
-    sm.current = 'addScreen'
+  def addMenu(self, *args):
+    self.contextMenu = ModalView(size_hint=(0.5, 0.5))
+    mainLayout = BoxLayout(
+        padding = 10,
+        spacing = 10,
+        pos_hint = {'center_x': 0.5, 'center_y': 0.5}, 
+        size_hint = (0.7, 0.8), 
+        orientation = 'vertical')
+    mainLayout.add_widget(Label(text='Add:'))
+    inputField = BoxLayout()
+    inputField.add_widget(Label(text='name: ', size_hint_x=0.1))
+    self.textField = TextInput(multiline=False)
+    inputField.add_widget(self.textField)
+    mainLayout.add_widget(inputField)
+    buttonAddBranch = Button(text='Add Branch')
+    buttonAddLeaf = Button(text='Add Leaf')
+    mainLayout.add_widget(buttonAddBranch)
+    mainLayout.add_widget(buttonAddLeaf)
+    buttonAddBranch.bind(on_press=self.addBranch)
+    buttonAddLeaf.bind(on_press=self.addLeaf)
+    close = Button(text='close')
+    close.bind(on_release=self.contextMenu.dismiss)
+    mainLayout.add_widget(close)
+
+    self.contextMenu.add_widget(mainLayout)
+    self.contextMenu.open()
+    
+  def addBranch(self, *args):
+    if self.textField.text != '':
+      tree.curItem().add(Branch(name=self.textField.text))
+      self.textField.text = ''
+      self.contextMenu.dismiss()
+      self.showTree()
+
+  def addLeaf(self, *args):
+    if self.textField.text != '':
+      tree.curItem().add(Leaf(name=self.textField.text))
+      self.textField.text = ''
+      self.contextMenu.dismiss()
+      self.showTree()
 
 class LeafScreen(Screen):
   def on_pre_enter(self):
@@ -166,49 +203,6 @@ class LeafScreen(Screen):
       sm.transition = SlideTransition(direction='right')
       sm.current = 'mainScreen'
 
-class AddLayout(FloatLayout):
-  def __init__(self, **kwargs):
-    super(AddLayout, self).__init__(**kwargs)
-    buttonBack = Button(text='back', pos_hint={'y': 0.9},  size_hint=(0.2,0.1))
-    self.add_widget(buttonBack)
-    buttonBack.bind(on_press=self.back)
-
-    mainLayout = BoxLayout(
-        padding = 10,
-        spacing = 10,
-        pos_hint = {'center_x': 0.5, 'center_y': 0.5}, 
-        size_hint = (0.7, 0.8), 
-        orientation = 'vertical')
-    mainLayout.add_widget(Label(text='Add:'))
-    inputField = BoxLayout()
-    inputField.add_widget(Label(text='name: ', size_hint_x=0.1))
-    self.textField = TextInput(multiline=False)
-    inputField.add_widget(self.textField)
-    mainLayout.add_widget(inputField)
-    buttonAddBranch = Button(text='Add Branch')
-    buttonAddLeaf = Button(text='Add Leaf')
-    mainLayout.add_widget(buttonAddBranch)
-    mainLayout.add_widget(buttonAddLeaf)
-    buttonAddBranch.bind(on_press=self.addBranch)
-    buttonAddLeaf.bind(on_press=self.addLeaf)
-
-    self.add_widget(mainLayout)
-    
-  def addBranch(self, *args):
-    if self.textField.text != '':
-      tree.curItem().add(Branch(name=self.textField.text))
-      self.textField.text = ''
-      self.back()  
-
-  def addLeaf(self, *args):
-    if self.textField.text != '':
-      tree.curItem().add(Leaf(name=self.textField.text))
-      self.textField.text = ''
-      self.back()  
-
-  def back(self, *args):
-    sm.transition = FadeTransition()
-    sm.current = 'mainScreen'
 
 sm = ScreenManager() 
 
@@ -221,12 +215,9 @@ class TreeNoteApp(App):
 
     mainScreen = MainScreen(name="mainScreen")
     leafScreen = LeafScreen(name="leafScreen")
-    addScreen = Screen(name='addScreen')
-    addScreen.add_widget(AddLayout())
 
     sm.add_widget(mainScreen)
     sm.add_widget(leafScreen)
-    sm.add_widget(addScreen)
     return sm
 
   def on_stop(self):
