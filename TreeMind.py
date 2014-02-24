@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+timeOut_forContextMenu = 0.4
+
 from tree import *
 tree = Tree()
 
@@ -27,32 +29,18 @@ from kivy.uix.screenmanager import ScreenManager, Screen, WipeTransition, FadeTr
 from kivy.properties import NumericProperty, ObjectProperty
 from kivy.clock import Clock
 
-
-
-"""
-tree.curItem().add(Branch('branch1'))
-tree.curItem().add(Branch('branch2'))
-tree.curItem().add(Leaf('leaf1'))
-tree.upTo(0)
-tree.curItem().add(Leaf('leaf2'))
-tree.curItem().add(Leaf('leaf3'))
-tree.curItem().add(Branch('branch3'))
-tree.down()
-print_all(tree.curItem())
-"""
-
 class ButtonTreeItem(Button):
-  def __init__(self, num, **kwargs):
+  def __init__(self, num, outward, **kwargs):
     super(ButtonTreeItem, self).__init__(**kwargs)
     self.size_hint_y = None
     self.num = num
     self.context = False
+    self.outward = outward
 
   def on_touch_down(self, touch):
     if self.collide_point(*touch.pos):
       self.create_clock()
     return super(ButtonTreeItem, self).on_touch_down(touch) 
-
   def on_touch_up(self, touch):
     if self.collide_point(*touch.pos):
       self.delete_clock()
@@ -62,26 +50,28 @@ class ButtonTreeItem(Button):
     return super(ButtonTreeItem, self).on_touch_up(touch) 
 
   def create_clock(self, *args):
-    Clock.schedule_once(self.contextMenu, 0.4)
-
+    Clock.schedule_once(self.openContextMenu, timeOut_forContextMenu)
   def delete_clock(self, *args):
-    Clock.unschedule(self.contextMenu)
+    Clock.unschedule(self.openContextMenu)
 
-  def contextMenu(self, *args):
+  def openContextMenu(self, *args):
     self.context = True
-    contextMenu = ModalView(size_hint=(0.5, 0.5))
-    #contextMenu.bind(on_dismiss=self.test)
+    self.contextMenu = ModalView(size_hint=(0.5, 0.5))
+    self.contextMenu.bind(on_dismiss=self.outward.showTree())
     contextLayout = BoxLayout(orientation='vertical')
     contextLayout.add_widget(Label(text=self.text))
     btnDelete = Button(text='delete')
-    btnDelete.bind(on_press=tree.curItem().remove(self.num))
-    btnDelete.bind(on_press=contextMenu.dismiss)
+    btnDelete.bind(on_press=self.delete)
     contextLayout.add_widget(btnDelete)
     close = Button(text='close')
-    close.bind(on_release=contextMenu.dismiss)
+    close.bind(on_release=self.contextMenu.dismiss)
     contextLayout.add_widget(close)
-    contextMenu.add_widget(contextLayout)
-    contextMenu.open()
+    self.contextMenu.add_widget(contextLayout)
+    self.contextMenu.open()
+  def delete(self, *args):
+    tree.curItem().remove(self.num)
+    self.contextMenu.dismiss()
+    self.outward.showTree()
 
 class ButtonBranch(ButtonTreeItem):
   def __init__(self, **kwargs):
@@ -131,13 +121,12 @@ class MainScreen(Screen):
     counter = 0
     for cur in tree.curItem().get():
       if isinstance(cur, Branch):
-        buttonBranch = ButtonBranch(text=cur.name, num=counter)
+        buttonBranch = ButtonBranch(text=cur.name, num=counter, outward=self)
         buttonBranch.bind(on_release=buttonBranch.goHere)
         buttonBranch.bind(on_release=self.showTree)
-        buttonBranch.bind(on_touch_up=self.showTree)
         self.contentLayout.add_widget(buttonBranch)
       if isinstance(cur, Leaf):
-        self.contentLayout.add_widget(ButtonLeaf(text=cur.name, num=counter))
+        self.contentLayout.add_widget(ButtonLeaf(text=cur.name, num=counter, outward=self))
       counter += 1  
 
   def goBack(self, *args):
@@ -206,14 +195,12 @@ class AddLayout(FloatLayout):
     self.add_widget(mainLayout)
     
   def addBranch(self, *args):
-    print 'Add NewBranch'
     if self.textField.text != '':
       tree.curItem().add(Branch(name=self.textField.text))
       self.textField.text = ''
       self.back()  
 
   def addLeaf(self, *args):
-    print 'Add NewLeaf'
     if self.textField.text != '':
       tree.curItem().add(Leaf(name=self.textField.text))
       self.textField.text = ''
