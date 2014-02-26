@@ -1,14 +1,22 @@
 #!/usr/bin/env python
 
 timeOut_forContextMenu = 0.4
-
 color = {
     'green':        [0.5,1,0.2,1],
+    'greenYellow':  [1,1,0,1], 
     'lightGreen':   [0.4,1,0.4,1],
     'white':        [1,1,1,1],
     'turquoise':    [0,1,1,1],
+    'brownRed':     [1,0,0,1], 
     'brown':        [1,0.5,0.1,1]
     }
+
+systemBtnBack = 8
+from kivy.utils import platform
+if platform() == 'android':
+  import android
+  android.map_key(android.KEYCODE_BACK, 1001)
+  systemBtnBack = 1001
 
 from tree import *
 tree = Tree()
@@ -22,6 +30,7 @@ Config.set('graphics', 'height', '700')
 """
 
 from kivy.app import App
+from kivy.core.window import Window
 
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
@@ -84,14 +93,14 @@ class ButtonTreeItem(Button):
 class ButtonBranch(ButtonTreeItem):
   def __init__(self, **kwargs):
     super(ButtonBranch, self).__init__(**kwargs)
-    self.background_color = color['brown']
+    self.background_color = color['brownRed']
   def goHere(self, *args):  
     tree.upTo(self.num)
 
 class ButtonLeaf(ButtonTreeItem):
   def __init__(self, **kwargs):
     super(ButtonLeaf, self).__init__(**kwargs)
-    self.background_color = color['green']
+    self.background_color = color['greenYellow']
   def on_release(self):
     tree.upTo(self.num)
     sm.transition = SlideTransition(direction='left')
@@ -106,6 +115,7 @@ class MainScreen(Screen):
     btnBack = Button(text='Back', size_hint_x=0.1)
     
     self.lblPath = Label(size_hint_x=0.8, color = color['turquoise'])
+    self.lblPath.anchors_x = 'left'
     btnAdd = Button(text='+', size_hint_x=0.1)
     topLayout = BoxLayout(size_hint_y = 0.1)
     topLayout.add_widget(btnBack)
@@ -125,6 +135,8 @@ class MainScreen(Screen):
     self.showTree()
 
   def on_pre_enter(self, *args):
+    self._keyboard = Window.request_keyboard(self._keyboard_closed, self)
+    self._keyboard.bind(on_key_down=self._on_keyboard_down)
     self.showTree()
     
   def showTree(self, *args):  
@@ -187,6 +199,15 @@ class MainScreen(Screen):
       self.contextMenu.dismiss()
       self.showTree()
 
+  def _on_keyboard_down(self, keyboard, keycode, text, modifiers):
+    if keycode[0] == systemBtnBack:
+      self.goBack()
+      return True
+    return False
+  def _keyboard_closed(self):
+    self._keyboard.unbind(on_key_down=self._on_keyboard_down)
+    self._keyboard = None
+
 class LeafScreen(Screen):
   def on_pre_enter(self):
     self.clear_widgets()
@@ -213,6 +234,9 @@ class LeafScreen(Screen):
 
     btnEdit.bind(on_release=self.editToggle)
     self.add_widget(leafLayout)
+    
+    self._keyboard = Window.request_keyboard(self._keyboard_closed, self)
+    self._keyboard.bind(on_key_down=self._on_keyboard_down)
 
   def editToggle(self, *args):
     self.textField.readonly = self.textField.readonly != True
@@ -220,7 +244,6 @@ class LeafScreen(Screen):
       self.textField.background_color = color['lightGreen'] 
     else:
       self.textField.background_color = color['white']
-
 
   def back(self, *args):
     if sm.current == "leafScreen" :
@@ -230,6 +253,14 @@ class LeafScreen(Screen):
         sm.transition = SlideTransition(direction='right')
         sm.current = 'mainScreen'
 
+  def _on_keyboard_down(self, keyboard, keycode, text, modifiers):
+    if keycode[0] == systemBtnBack:
+      self.back()
+      return True
+    return False
+  def _keyboard_closed(self):
+    self._keyboard.unbind(on_key_down=self._on_keyboard_down)
+    self._keyboard = None
 
 sm = ScreenManager() 
 
