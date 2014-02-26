@@ -2,6 +2,14 @@
 
 timeOut_forContextMenu = 0.4
 
+color = {
+    'green':        [0.5,1,0.2,1],
+    'lightGreen':   [0.4,1,0.4,1],
+    'white':        [1,1,1,1],
+    'turquoise':    [0,1,1,1],
+    'brown':        [1,0.5,0.1,1]
+    }
+
 from tree import *
 tree = Tree()
 
@@ -76,14 +84,14 @@ class ButtonTreeItem(Button):
 class ButtonBranch(ButtonTreeItem):
   def __init__(self, **kwargs):
     super(ButtonBranch, self).__init__(**kwargs)
-    self.background_color=[1,0,0,1]
+    self.background_color = color['brown']
   def goHere(self, *args):  
     tree.upTo(self.num)
 
 class ButtonLeaf(ButtonTreeItem):
   def __init__(self, **kwargs):
     super(ButtonLeaf, self).__init__(**kwargs)
-    self.background_color=[1,1,0,1]
+    self.background_color = color['green']
   def on_release(self):
     tree.upTo(self.num)
     sm.transition = SlideTransition(direction='left')
@@ -95,22 +103,23 @@ class MainScreen(Screen):
 
     mainLayout = GridLayout(cols=1)
     # top
-    buttonBack = Button(text='Back', size_hint_x=0.1)
-    self.lblPath = Label(size_hint_x=0.8, color = [0,1,1,1], halign = 'left')
-    buttonAdd = Button(text='+', size_hint_x=0.1)
+    btnBack = Button(text='Back', size_hint_x=0.1)
+    
+    self.lblPath = Label(size_hint_x=0.8, color = color['turquoise'])
+    btnAdd = Button(text='+', size_hint_x=0.1)
     topLayout = BoxLayout(size_hint_y = 0.1)
-    topLayout.add_widget(buttonBack)
+    topLayout.add_widget(btnBack)
     topLayout.add_widget(self.lblPath)
-    topLayout.add_widget(buttonAdd)
+    topLayout.add_widget(btnAdd)
     mainLayout.add_widget(topLayout) 
-    buttonAdd.bind(on_press=self.addMenu)
+    btnAdd.bind(on_press=self.addMenu)
     # Content
     scroll = ScrollView(size_hint=(1,1), do_scroll_x=False)
     self.contentLayout = GridLayout(cols = 1, padding = 10, spacing = 10, size_hint_y = None)
     self.contentLayout.bind(minimum_height=self.contentLayout.setter('height'))  # for scrolling
     scroll.add_widget(self.contentLayout)
     mainLayout.add_widget(scroll)
-    buttonBack.bind(on_press=self.goBack)
+    btnBack.bind(on_press=self.goBack)
 
     self.add_widget(mainLayout)
     self.showTree()
@@ -124,10 +133,10 @@ class MainScreen(Screen):
     counter = 0
     for cur in tree.curItem().get():
       if isinstance(cur, Branch):
-        buttonBranch = ButtonBranch(text=cur.name, num=counter, outward=self)
-        buttonBranch.bind(on_release=buttonBranch.goHere)
-        buttonBranch.bind(on_release=self.showTree)
-        self.contentLayout.add_widget(buttonBranch)
+        btnBranch = ButtonBranch(text=cur.name, num=counter, outward=self)
+        btnBranch.bind(on_release=btnBranch.goHere)
+        btnBranch.bind(on_release=self.showTree)
+        self.contentLayout.add_widget(btnBranch)
       if isinstance(cur, Leaf):
         self.contentLayout.add_widget(ButtonLeaf(text=cur.name, num=counter, outward=self))
       counter += 1  
@@ -151,12 +160,12 @@ class MainScreen(Screen):
     self.textField = TextInput(multiline=False)
     inputField.add_widget(self.textField)
     mainLayout.add_widget(inputField)
-    buttonAddBranch = Button(text='Add Branch')
-    buttonAddLeaf = Button(text='Add Leaf')
-    mainLayout.add_widget(buttonAddBranch)
-    mainLayout.add_widget(buttonAddLeaf)
-    buttonAddBranch.bind(on_press=self.addBranch)
-    buttonAddLeaf.bind(on_press=self.addLeaf)
+    btnAddBranch = Button(text='Add Branch')
+    btnAddLeaf = Button(text='Add Leaf')
+    mainLayout.add_widget(btnAddBranch)
+    mainLayout.add_widget(btnAddLeaf)
+    btnAddBranch.bind(on_press=self.addBranch)
+    btnAddLeaf.bind(on_press=self.addLeaf)
     close = Button(text='close')
     close.bind(on_release=self.contextMenu.dismiss)
     mainLayout.add_widget(close)
@@ -185,19 +194,33 @@ class LeafScreen(Screen):
     leafLayout = BoxLayout(orientation = 'vertical')
 
     # top
-    buttonBack = Button(text='Back', size_hint_x=0.1)
-    capture = Label(text=tree.curItem().name, size_hint_x=0.9)
+    btnBack = Button(text='Back', size_hint_x=0.1)
+    capture = Label(text=tree.curItem().name, size_hint_x=0.8, color = color['turquoise'])
+    btnEdit = Button(text='E', size_hint_x=0.1)
     topLayout = BoxLayout(size_hint_y = 0.1)
-    topLayout.add_widget(buttonBack)
+    topLayout.add_widget(btnBack)
     topLayout.add_widget(capture)
+    topLayout.add_widget(btnEdit)
     leafLayout.add_widget(topLayout) 
-    buttonBack.bind(on_press=self.back)
+    btnBack.bind(on_press=self.back)
     
     # Content
-    self.textField = TextInput(text=tree.curItem().read())
+    self.textField = TextInput(
+        text=tree.curItem().read(), 
+        background_color = color['lightGreen'],
+        readonly = True)
     leafLayout.add_widget(self.textField) 
 
+    btnEdit.bind(on_release=self.editToggle)
     self.add_widget(leafLayout)
+
+  def editToggle(self, *args):
+    self.textField.readonly = self.textField.readonly != True
+    if self.textField.readonly :
+      self.textField.background_color = color['lightGreen'] 
+    else:
+      self.textField.background_color = color['white']
+
 
   def back(self, *args):
     tree.curItem().write(self.textField.text)
