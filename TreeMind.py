@@ -223,11 +223,12 @@ class LeafScreen(Screen):
 
 
   def back(self, *args):
-    tree.curItem().write(self.textField.text)
-    if not tree.reachRoot():
-      tree.down()
-      sm.transition = SlideTransition(direction='right')
-      sm.current = 'mainScreen'
+    if sm.current == "leafScreen" :
+      tree.curItem().write(self.textField.text)
+      if not tree.reachRoot():
+        tree.down()
+        sm.transition = SlideTransition(direction='right')
+        sm.current = 'mainScreen'
 
 
 sm = ScreenManager() 
@@ -241,6 +242,7 @@ class TreeNoteApp(App):
 
     mainScreen = MainScreen(name="mainScreen")
     leafScreen = LeafScreen(name="leafScreen")
+    self.bind(on_stop=leafScreen.back)
 
     sm.add_widget(mainScreen)
     sm.add_widget(leafScreen)
