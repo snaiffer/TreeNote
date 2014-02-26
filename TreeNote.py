@@ -2,13 +2,13 @@
 
 timeOut_forContextMenu = 0.4
 color = {
-    'green':        [0.5,1,0.2,1],
-    'greenYellow':  [1,1,0,1], 
-    'lightGreen':   [0.4,1,0.4,1],
+    'btnLeaf':      [0.25,1,0.25,0.8], #[1,1,0,1], 
+    'btnBranch':    [1,0.4,0.3,0.9],  #[1,0.4,0.3,1], 
+    'textLeaf':     [0.4,1,0.4,1],
+    'lblPath':      [0.2,0,0,1],
     'white':        [1,1,1,1],
-    'turquoise':    [0,1,1,1],
-    'brownRed':     [1,0,0,1], 
-    'brown':        [1,0.5,0.1,1]
+    'brown':        [1,0.5,0.1,1],
+    'green':        [0.5,1,0.2,1]
     }
 
 systemBtnBack = 8
@@ -45,6 +45,7 @@ from kivy.uix.textinput import TextInput
 from kivy.uix.screenmanager import ScreenManager, Screen, WipeTransition, FadeTransition , SlideTransition
 from kivy.properties import NumericProperty, ObjectProperty
 from kivy.clock import Clock
+from kivy.graphics import Color, Rectangle
 
 class ButtonTreeItem(Button):
   def __init__(self, num, outward, **kwargs):
@@ -75,7 +76,12 @@ class ButtonTreeItem(Button):
     self.context = True
     self.contextMenu = ModalView(size_hint=(0.5, 0.5))
     self.contextMenu.bind(on_dismiss=self.outward.showTree())
-    contextLayout = BoxLayout(orientation='vertical')
+    contextLayout = BoxLayout(
+        padding = 10,
+        spacing = 10,
+        pos_hint = {'center_x': 0.5, 'center_y': 0.5}, 
+        size_hint = (0.7, 0.8), 
+        orientation = 'vertical')
     contextLayout.add_widget(Label(text=self.text))
     btnDelete = Button(text='delete')
     btnDelete.bind(on_press=self.delete)
@@ -93,14 +99,14 @@ class ButtonTreeItem(Button):
 class ButtonBranch(ButtonTreeItem):
   def __init__(self, **kwargs):
     super(ButtonBranch, self).__init__(**kwargs)
-    self.background_color = color['brownRed']
+    self.background_color = color['btnBranch']
   def goHere(self, *args):  
     tree.upTo(self.num)
 
 class ButtonLeaf(ButtonTreeItem):
   def __init__(self, **kwargs):
     super(ButtonLeaf, self).__init__(**kwargs)
-    self.background_color = color['greenYellow']
+    self.background_color = color['btnLeaf']
   def on_release(self):
     tree.upTo(self.num)
     sm.transition = SlideTransition(direction='left')
@@ -114,7 +120,7 @@ class MainScreen(Screen):
     # top
     btnBack = Button(text='Back', size_hint_x=0.1)
     
-    self.lblPath = Label(size_hint_x=0.8, color = color['turquoise'])
+    self.lblPath = Label(size_hint_x=0.8, color = color['lblPath'])
     self.lblPath.anchors_x = 'left'
     btnAdd = Button(text='+', size_hint_x=0.1)
     topLayout = BoxLayout(size_hint_y = 0.1)
@@ -133,6 +139,18 @@ class MainScreen(Screen):
 
     self.add_widget(mainLayout)
     self.showTree()
+
+    mainLayout.bind(
+          size=self._update_rect,
+          pos=self._update_rect)
+    with mainLayout.canvas.before:
+      Color(0.5, 0.8, 1, 0.9) 
+      self.rect = Rectangle(
+                  size=mainLayout.size,
+                  pos=mainLayout.pos)
+  def _update_rect(self, instance, value):
+    self.rect.pos = instance.pos
+    self.rect.size = instance.size
 
   def on_pre_enter(self, *args):
     self._keyboard = Window.request_keyboard(self._keyboard_closed, self)
@@ -168,7 +186,7 @@ class MainScreen(Screen):
         orientation = 'vertical')
     mainLayout.add_widget(Label(text='Add:'))
     inputField = BoxLayout()
-    inputField.add_widget(Label(text='name: ', size_hint_x=0.1))
+    inputField.add_widget(Label(text='name: ', size_hint_x=0.3))
     self.textField = TextInput(multiline=False)
     inputField.add_widget(self.textField)
     mainLayout.add_widget(inputField)
@@ -216,7 +234,7 @@ class LeafScreen(Screen):
 
     # top
     btnBack = Button(text='Back', size_hint_x=0.1)
-    capture = Label(text=tree.curItem().name, size_hint_x=0.8, color = color['turquoise'])
+    capture = Label(text=tree.curItem().name, size_hint_x=0.8, color = color['lblPath'])
     btnEdit = Button(text='E', size_hint_x=0.1)
     topLayout = BoxLayout(size_hint_y = 0.1)
     topLayout.add_widget(btnBack)
@@ -228,7 +246,7 @@ class LeafScreen(Screen):
     # Content
     self.textField = TextInput(
         text=tree.curItem().read(), 
-        background_color = color['lightGreen'],
+        background_color = color['textLeaf'],
         readonly = True)
     leafLayout.add_widget(self.textField) 
 
@@ -238,10 +256,22 @@ class LeafScreen(Screen):
     self._keyboard = Window.request_keyboard(self._keyboard_closed, self)
     self._keyboard.bind(on_key_down=self._on_keyboard_down)
 
+    leafLayout.bind(
+          size=self._update_rect,
+          pos=self._update_rect)
+    with leafLayout.canvas.before:
+      Color(0.5, 0.8, 1, 0.9) 
+      self.rect = Rectangle(
+                  size=leafLayout.size,
+                  pos=leafLayout.pos)
+  def _update_rect(self, instance, value):
+    self.rect.pos = instance.pos
+    self.rect.size = instance.size
+
   def editToggle(self, *args):
     self.textField.readonly = self.textField.readonly != True
     if self.textField.readonly :
-      self.textField.background_color = color['lightGreen'] 
+      self.textField.background_color = color['textLeaf'] 
     else:
       self.textField.background_color = color['white']
 

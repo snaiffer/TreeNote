@@ -1,8 +1,13 @@
 #!/usr/bin/env python
+" A module is for working with text note "
 
 from general import *
 
 class Leaf():
+  """
+  A class is for storaging text note in utf-8
+  general module is necessary for working
+  """
   def __init__(self, name=' ', text='', desc='', path=' '):
     self.name = name
     self.desc = ''
@@ -15,9 +20,11 @@ class Leaf():
     if not os.path.exists(self._path):
       self.write(text) 
   def read(self):
+    " Read the note "
     fd = open(self._path, 'rb')
     return fd.read().decode('utf-8', 'xmlcharrefreplace')
   def write(self, text):
+    " Save to the note "
     fd = open(self._path, 'wb')
     try:
       fd.write(text.encode('utf-8', 'xmlcharrefreplace'))
@@ -25,6 +32,7 @@ class Leaf():
     finally:  
       fd.close()
   def prepare_del(self):
+    " Prepare to remove the note "
     os.remove(self._path)
   def __str__(self):
     return self.name + '\t desc: "' + self.desc + '"\n\t____text____:\n' + self.read()
