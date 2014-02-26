@@ -28,7 +28,8 @@ class Branch():
     self._cleaner(self._children[index])
     del self._children[index]
   def __str__(self):
-    return self.name + ': (with ' + str(len(self._children)) + ' children)'
+    return self.name
+    #return self.name + ': (with ' + str(len(self._children)) + ' children)'
 
 if __name__ == '__main__':
   branch = Branch(name='branch')

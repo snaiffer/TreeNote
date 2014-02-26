@@ -1,0 +1,91 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+AchiveRoot	tree.py	/^class AchiveRoot(TreeException):$/;"	c
+Branch	branch.py	/^class Branch():$/;"	c
+ButtonBranch	TreeMind.py	/^class ButtonBranch(ButtonTreeItem):$/;"	c
+ButtonLeaf	TreeMind.py	/^class ButtonLeaf(ButtonTreeItem):$/;"	c
+ButtonTreeItem	TreeMind.py	/^class ButtonTreeItem(Button):$/;"	c
+Data	data.py	/^class Data():$/;"	c
+Leaf	leaf.py	/^class Leaf():$/;"	c
+LeafScreen	TreeMind.py	/^class LeafScreen(Screen):$/;"	c
+MainScreen	TreeMind.py	/^class MainScreen(Screen):$/;"	c
+Stack	stack.py	/^class Stack():$/;"	c
+Tree	tree.py	/^class Tree():$/;"	c
+TreeException	tree.py	/^class TreeException(Exception):$/;"	c
+TreeNoteApp	TreeMind.py	/^class TreeNoteApp(App):$/;"	c
+XMLfileNotfound	tree.py	/^class XMLfileNotfound(TreeException):$/;"	c
+__init__	TreeMind.py	/^  def __init__(self, **kwargs):$/;"	m	class:ButtonBranch
+__init__	TreeMind.py	/^  def __init__(self, **kwargs):$/;"	m	class:ButtonLeaf
+__init__	TreeMind.py	/^  def __init__(self, **kwargs):$/;"	m	class:MainScreen
+__init__	TreeMind.py	/^  def __init__(self, num, outward, **kwargs):$/;"	m	class:ButtonTreeItem
+__init__	branch.py	/^  def __init__(self, name='branch'):$/;"	m	class:Branch
+__init__	data.py	/^  def __init__(self, db, dbfile_name='dbfile.dat'):$/;"	m	class:Data
+__init__	leaf.py	/^  def __init__(self, name=' ', text='', desc='', path=' '):$/;"	m	class:Leaf
+__init__	tree.py	/^  def __init__(self, root=Branch(name='root')):$/;"	m	class:Tree
+__str__	branch.py	/^  def __str__(self):$/;"	m	class:Branch	file:
+__str__	leaf.py	/^  def __str__(self):$/;"	m	class:Leaf	file:
+__str__	stack.py	/^  def __str__(self):$/;"	m	class:Stack	file:
+_cleaner	branch.py	/^  def _cleaner(self, item):$/;"	m	class:Branch
+_stack	stack.py	/^  _stack = []$/;"	v	class:Stack
+add	branch.py	/^  def add(self, item):$/;"	m	class:Branch
+addBranch	TreeMind.py	/^  def addBranch(self, *args):$/;"	m	class:MainScreen
+addLeaf	TreeMind.py	/^  def addLeaf(self, *args):$/;"	m	class:MainScreen
+addMenu	TreeMind.py	/^  def addMenu(self, *args):$/;"	m	class:MainScreen
+addedB	branch.py	/^  addedB = branch.add(Branch(name='branch4'))$/;"	v
+back	TreeMind.py	/^  def back(self, *args):$/;"	m	class:LeafScreen
+branch	branch.py	/^  branch = Branch(name='branch')$/;"	v
+branch1	branch.py	/^  branch1 = Branch(name='branch1')$/;"	v
+build	TreeMind.py	/^  def build(self):$/;"	m	class:TreeNoteApp
+create_clock	TreeMind.py	/^  def create_clock(self, *args):$/;"	m	class:ButtonTreeItem
+curItem	tree.py	/^  def curItem(self):$/;"	m	class:Tree
+data2	data.py	/^  data2 = Data(db=treeLoaded)$/;"	v	class:Data
+dataPath	general.py	/^dataPath = progDir + '\/data'$/;"	v
+delete	TreeMind.py	/^  def delete(self, *args):$/;"	m	class:ButtonTreeItem
+delete_clock	TreeMind.py	/^  def delete_clock(self, *args):$/;"	m	class:ButtonTreeItem
+down	tree.py	/^  def down(self):$/;"	m	class:Tree
+generate_UniqueName	general.py	/^def generate_UniqueName(fileName, path):$/;"	f
+generate_XML	tree.py	/^    def generate_XML(tree_curI, xml_curE):$/;"	f	function:Tree.save
+get	branch.py	/^  def get(self, index=-1):$/;"	m	class:Branch
+goBack	TreeMind.py	/^  def goBack(self, *args):$/;"	m	class:MainScreen
+goHere	TreeMind.py	/^  def goHere(self, *args):  $/;"	m	class:ButtonBranch
+isEmpty	stack.py	/^  def isEmpty(self):$/;"	m	class:Stack
+leaf1	leaf.py	/^  leaf1 = Leaf('leaf1', test_str)$/;"	v
+leaf2	leaf.py	/^  leaf2 = Leaf('leaf2')$/;"	v
+load	data.py	/^  def load(self):$/;"	m	class:Data
+on_pre_enter	TreeMind.py	/^  def on_pre_enter(self):$/;"	m	class:LeafScreen
+on_pre_enter	TreeMind.py	/^  def on_pre_enter(self, *args):$/;"	m	class:MainScreen
+on_release	TreeMind.py	/^  def on_release(self):$/;"	m	class:ButtonLeaf
+on_stop	TreeMind.py	/^  def on_stop(self):$/;"	m	class:TreeNoteApp
+on_touch_down	TreeMind.py	/^  def on_touch_down(self, touch):$/;"	m	class:ButtonTreeItem
+on_touch_up	TreeMind.py	/^  def on_touch_up(self, touch):$/;"	m	class:ButtonTreeItem
+openContextMenu	TreeMind.py	/^  def openContextMenu(self, *args):$/;"	m	class:ButtonTreeItem
+pop	stack.py	/^  def pop(self):$/;"	m	class:Stack
+prepare_del	leaf.py	/^  def prepare_del(self):$/;"	m	class:Leaf
+print_all	tree.py	/^def print_all(item, iterNum=0):$/;"	f
+progDir	general.py	/^progDir = os.path.dirname(os.path.realpath(__file__))$/;"	v
+push	stack.py	/^  def push(self, item):$/;"	m	class:Stack
+reachRoot	tree.py	/^  def reachRoot(self):$/;"	m	class:Tree
+read	leaf.py	/^  def read(self):$/;"	m	class:Leaf
+remove	branch.py	/^  def remove(self, index):$/;"	m	class:Branch
+restore	tree.py	/^  def restore(self):$/;"	m	class:Tree
+restore_fromXML	tree.py	/^    def restore_fromXML(tree_curI, xml_curE):$/;"	f	function:Tree.restore
+save	data.py	/^  def save(self):$/;"	m	class:Data
+save	tree.py	/^  def save(self):$/;"	m	class:Tree
+showTree	TreeMind.py	/^  def showTree(self, *args):  $/;"	m	class:MainScreen
+size	stack.py	/^  def size(self):$/;"	m	class:Stack
+sm	TreeMind.py	/^sm = ScreenManager() $/;"	v
+structureFile	general.py	/^structureFile = dataPath + '\/structure.xml'$/;"	v
+testStack	stack.py	/^  testStack = Stack()$/;"	v
+test_str	leaf.py	/^  test_str = 'leaf1_text'$/;"	v
+test_str2	leaf.py	/^  test_str2 = 'New text'$/;"	v
+timeOut_forContextMenu	TreeMind.py	/^timeOut_forContextMenu = 0.4$/;"	v
+top	stack.py	/^  def top(self):$/;"	m	class:Stack
+tree	TreeMind.py	/^tree = Tree()$/;"	v
+tree	tree.py	/^  tree = Tree()$/;"	v	class:XMLfileNotfound
+treeLoaded	data.py	/^  treeLoaded = Tree()$/;"	v	class:Data
+upTo	tree.py	/^  def upTo(self, branchNum):$/;"	m	class:Tree
+write	leaf.py	/^  def write(self, text):$/;"	m	class:Leaf

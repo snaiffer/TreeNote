@@ -96,9 +96,11 @@ class MainScreen(Screen):
     mainLayout = GridLayout(cols=1)
     # top
     buttonBack = Button(text='Back', size_hint_x=0.1)
+    self.lblPath = Label(size_hint_x=0.8, color = [0,1,1,1], halign = 'left')
     buttonAdd = Button(text='+', size_hint_x=0.1)
     topLayout = BoxLayout(size_hint_y = 0.1)
     topLayout.add_widget(buttonBack)
+    topLayout.add_widget(self.lblPath)
     topLayout.add_widget(buttonAdd)
     mainLayout.add_widget(topLayout) 
     buttonAdd.bind(on_press=self.addMenu)
@@ -118,6 +120,7 @@ class MainScreen(Screen):
     
   def showTree(self, *args):  
     self.contentLayout.clear_widgets()
+    self.lblPath.text = tree.getPath()
     counter = 0
     for cur in tree.curItem().get():
       if isinstance(cur, Branch):

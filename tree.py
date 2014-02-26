@@ -34,6 +34,8 @@ class Tree():
       self.__path.pop()
     else:
       raise AchiveRoot
+  def getPath(self):
+    return str(self.__path)
   def curItem(self):
     return self.__path.top()
   def save(self):
@@ -86,6 +88,7 @@ if __name__ == '__main__':
   tree = Tree()
   try:
     tree.restore()
+    print tree.getPath()
     print_all(tree.curItem())
   except XMLfileNotfound:
     print "Error: XML file isn't found"
