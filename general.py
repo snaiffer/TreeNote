@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+" A module is for general settings "
 
 import os
 

@@ -1,8 +1,13 @@
 #!/usr/bin/env python
+" A module is for realising tree structure "
 
 from leaf import *
 
 class Branch():
+  """
+  A class realises tree structure with unlimited nesting 
+  leaf module is necessary for working
+  """
   def __init__(self, name='branch'):
     self.name=name
     self._children=[]

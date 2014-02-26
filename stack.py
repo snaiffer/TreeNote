@@ -1,6 +1,8 @@
 #!/usr/bin/env python
+" A module is for stack realisation "
 
 class Stack():
+  " A class is for stack realisation "
   def __init__(self):
     self.__stack = []
   def push(self, item):
@@ -17,6 +19,7 @@ class Stack():
   def size(self):
     return len(self.__stack)
   def getAll(self):
+    " get all items of the stack "
     return self.__stack
   def __str__(self):
     if self.__stack == []:

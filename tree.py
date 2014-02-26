@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+" A module is for representating and working with tree structure "
 
 from stack import *
 from branch import *
@@ -7,6 +8,7 @@ from xml.etree.ElementTree import *
 from general import *
 
 def print_all(item, iterNum=0):
+  " print all tree structure "
   indent='  '*iterNum
   print str(indent) + str(item)
   if isinstance(item, Branch):
@@ -18,6 +20,7 @@ def print_all(item, iterNum=0):
         print_all(b_cur, iterNum)
 
 class Tree():
+  " A class is for representating and working with tree structure "
   def __init__(self, root=Branch(name='root')):
     self.__root = root
     self.__path = Stack()
@@ -39,6 +42,7 @@ class Tree():
   def curItem(self):
     return self.__path.top()
   def save(self):
+    " Save tree structure as xml format "
     def generate_XML(tree_curI, xml_curE):
       if isinstance(tree_curI, Branch):
         curE = Element('Branch', name=tree_curI.name)
@@ -56,6 +60,7 @@ class Tree():
     ElementTree(xml_tree).write(structureFile)
 
   def restore(self):
+    " Restore tree structure from xml file "
     def restore_fromXML(tree_curI, xml_curE):
       elements = [elem for elem in xml_curE]
       if xml_curE.tag == 'root':
@@ -74,8 +79,6 @@ class Tree():
     except IOError:
       raise XMLfileNotfound
       pass
-
-
 
 class TreeException(Exception):
   pass
