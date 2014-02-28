@@ -4,9 +4,9 @@ timeOut_forContextMenu = 0.4
 color = {
     'btnLeaf':      [0.25,1,0.25,0.8], #[1,1,0,1], 
     'btnBranch':    [1,0.4,0.3,0.9],  #[1,0.4,0.3,1], 
-    'textLeaf':     [0.4,1,0.4,1],
+    'readLeaf':     [0.4,1,0.4,1],
     'lblPath':      [0.2,0,0,1],
-    'white':        [1,1,1,1],
+    'editLeaf':        [1,1,1,1],
     'brown':        [1,0.5,0.1,1],
     'green':        [0.5,1,0.2,1]
     }
@@ -226,60 +226,94 @@ class MainScreen(Screen):
     self._keyboard.unbind(on_key_down=self._on_keyboard_down)
     self._keyboard = None
 
+class TextInputForScroll(TextInput):
+  def on_text(self, *args):
+    actual_height = (len(self._lines)+1) * (self.line_height+self._line_spacing)*1.1
+    self.height=actual_height
+
 class LeafScreen(Screen):
   def on_pre_enter(self):
     self.clear_widgets()
     
-    leafLayout = BoxLayout(orientation = 'vertical')
-
-    # top
-    btnBack = Button(text='Back', size_hint_x=0.1)
-    capture = Label(text=tree.curItem().name, size_hint_x=0.8, color = color['lblPath'])
-    btnEdit = Button(text='E', size_hint_x=0.1)
-    topLayout = BoxLayout(size_hint_y = 0.1)
-    topLayout.add_widget(btnBack)
-    topLayout.add_widget(capture)
-    topLayout.add_widget(btnEdit)
-    leafLayout.add_widget(topLayout) 
-    btnBack.bind(on_press=self.back)
+    self.leafLayout = BoxLayout(orientation = 'vertical')
     
-    # Content
-    self.textField = TextInput(
-        text=tree.curItem().read(), 
-        background_color = color['textLeaf'],
-        readonly = True,
-        focus = True)
-    leafLayout.add_widget(self.textField) 
+    self.readMode()
+    #self.editMode()
 
-    btnEdit.bind(on_release=self.editToggle)
-    self.add_widget(leafLayout)
-    
+    self.add_widget(self.leafLayout)
+
     self._keyboard = Window.request_keyboard(self._keyboard_closed, self)
     self._keyboard.bind(on_key_down=self._on_keyboard_down)
 
-    leafLayout.bind(
+    self.leafLayout.bind(
           size=self._update_rect,
           pos=self._update_rect)
-    with leafLayout.canvas.before:
+    with self.leafLayout.canvas.before:
       Color(0.5, 0.8, 1, 0.9) 
       self.rect = Rectangle(
-                  size=leafLayout.size,
-                  pos=leafLayout.pos)
+                  size=self.leafLayout.size,
+                  pos=self.leafLayout.pos)
   def _update_rect(self, instance, value):
     self.rect.pos = instance.pos
     self.rect.size = instance.size
 
-  def editToggle(self, *args):
-    self.textField.readonly = self.textField.readonly != True
-    if self.textField.readonly :
-      self.textField.background_color = color['textLeaf'] 
-    else:
-      self.textField.background_color = color['white']
-    self.textField.focus = True  
+  def readMode(self, *args):
+    self.leafLayout.clear_widgets()
+    # top
+    btnBack = Button(text='Back', size_hint_x=0.1)
+    capture = Label(text=tree.curItem().name, size_hint_x=0.8, color = color['lblPath'])
+    btnEdit = Button(text='Edit', size_hint_x=0.1)
+    topLayout = BoxLayout(size_hint_y = 0.1)
+    topLayout.add_widget(btnBack)
+    topLayout.add_widget(capture)
+    topLayout.add_widget(btnEdit)
+    self.leafLayout.add_widget(topLayout) 
+    btnBack.bind(on_press=self.back)
+
+    # Content
+    self.textField = TextInputForScroll(
+        size_hint_y=None,
+        text=tree.curItem().read(), 
+        background_color = color['readLeaf'],
+        readonly = True,
+        focus = True)
+    self.textField.on_text()
+    textFieldScroll = ScrollView( bar_width = 10)
+    textFieldScroll.add_widget(self.textField)
+
+    self.leafLayout.add_widget(textFieldScroll) 
+
+    btnEdit.bind(on_release=self.editMode)
+
+  def editMode(self, *args):
+    self.leafLayout.clear_widgets()
+    # top
+    btnBack = Button(text='Back', size_hint_x=0.1)
+    capture = Label(text=tree.curItem().name, size_hint_x=0.8, color = color['lblPath'])
+    btnSave = Button(text='Save', size_hint_x=0.1)
+    topLayout = BoxLayout(size_hint_y = 0.1)
+    topLayout.add_widget(btnBack)
+    topLayout.add_widget(capture)
+    topLayout.add_widget(btnSave)
+    self.leafLayout.add_widget(topLayout) 
+    btnBack.bind(on_press=self.back)
+
+    # Content
+    self.textField = TextInput(
+        text=tree.curItem().read(), 
+        background_color = color['editLeaf'],
+        focus = True)
+    self.leafLayout.add_widget(self.textField)
+
+    btnSave.bind(on_release=self.readMode,
+                on_press=self.save)
+
+  def save(self, *args):  
+    tree.curItem().write(self.textField.text)
 
   def back(self, *args):
     if sm.current == "leafScreen" :
-      tree.curItem().write(self.textField.text)
+      self.save()
       if not tree.reachRoot():
         tree.down()
         sm.transition = SlideTransition(direction='right')
