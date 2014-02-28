@@ -187,7 +187,7 @@ class MainScreen(Screen):
     mainLayout.add_widget(Label(text='Add:'))
     inputField = BoxLayout()
     inputField.add_widget(Label(text='name: ', size_hint_x=0.3))
-    self.textField = TextInput(multiline=False)
+    self.textField = TextInput(multiline=False, focus=True)
     inputField.add_widget(self.textField)
     mainLayout.add_widget(inputField)
     btnAddBranch = Button(text='Add Branch')
@@ -247,7 +247,8 @@ class LeafScreen(Screen):
     self.textField = TextInput(
         text=tree.curItem().read(), 
         background_color = color['textLeaf'],
-        readonly = True)
+        readonly = True,
+        focus = True)
     leafLayout.add_widget(self.textField) 
 
     btnEdit.bind(on_release=self.editToggle)
@@ -274,6 +275,7 @@ class LeafScreen(Screen):
       self.textField.background_color = color['textLeaf'] 
     else:
       self.textField.background_color = color['white']
+    self.textField.focus = True  
 
   def back(self, *args):
     if sm.current == "leafScreen" :
