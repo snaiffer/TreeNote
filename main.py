@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 
 timeOut_forContextMenu = 0.4
+btnHeightRate = 1.7           # more value less button of the list
 color = {
     'btnLeaf':      [0.25,1,0.25,0.8], #[1,1,0,1], 
     'btnBranch':    [1,0.4,0.3,0.9],  #[1,0.4,0.3,1], 
     'readLeaf':     [0.4,1,0.4,1],
     'lblPath':      [0.2,0,0,1],
-    'editLeaf':        [1,1,1,1],
+    'editLeaf':     [1,1,1,1],
     'brown':        [1,0.5,0.1,1],
     'green':        [0.5,1,0.2,1]
     }
@@ -16,6 +17,7 @@ from kivy.utils import platform
 if platform() == 'android':
   import android
   android.map_key(android.KEYCODE_BACK, 1001)
+  global systemBtnBack
   systemBtnBack = 1001
 
 from tree import *
@@ -47,9 +49,11 @@ from kivy.properties import NumericProperty, ObjectProperty
 from kivy.clock import Clock
 from kivy.graphics import Color, Rectangle
 
+
 class ButtonTreeItem(Button):
   def __init__(self, num, outward, **kwargs):
     super(ButtonTreeItem, self).__init__(**kwargs)
+    self.size = (20, window_height/1.7) # 20 isn't change anything
     self.size_hint_y = None
     self.num = num
     self.context = False
@@ -116,9 +120,10 @@ class MainScreen(Screen):
   def __init__(self, **kwargs):
     super(MainScreen, self).__init__(**kwargs)
 
-    #self.add_widget(Button(text='text')) #
-
     mainLayout = GridLayout(cols=1)
+
+    global window_height
+    window_height = mainLayout.height
     # top
     btnBack = Button(text='Back', size_hint_x=0.1)
     
@@ -142,6 +147,8 @@ class MainScreen(Screen):
     self.add_widget(mainLayout)
     self.showTree()
 
+    self.win = Window
+
     mainLayout.bind(
           size=self._update_rect,
           pos=self._update_rect)
@@ -155,10 +162,18 @@ class MainScreen(Screen):
     self.rect.size = instance.size
 
   def on_pre_enter(self, *args):
-    #self._keyboard = Window.request_keyboard(self._keyboard_closed, self)
-    #self._keyboard.bind(on_key_down=self._on_keyboard_down)
+    self.win.bind(on_keyboard=self.keyboardHandler)
     self.showTree()
     
+  def on_pre_leave(self):
+    self.win.unbind(on_keyboard=self.keyboardHandler)
+
+  def keyboardHandler(self, window, keycode1, keycode2, text, modifiers):
+    if keycode1 == systemBtnBack:
+      self.goBack()
+      return True
+    return False
+
   def showTree(self, *args):  
     self.contentLayout.clear_widgets()
     self.lblPath.text = tree.getPath()
@@ -219,16 +234,6 @@ class MainScreen(Screen):
       self.contextMenu.dismiss()
       self.showTree()
 
-    """
-  def _on_keyboard_down(self, keyboard, keycode, text, modifiers):
-    if keycode[0] == systemBtnBack:
-      self.goBack()
-      return True
-    return False
-  def _keyboard_closed(self):
-    self._keyboard.unbind(on_key_down=self._on_keyboard_down)
-    self._keyboard = None
-    """
 
 class TextInputForScroll(TextInput):
   def on_text(self, *args):
@@ -246,8 +251,8 @@ class LeafScreen(Screen):
 
     self.add_widget(self.leafLayout)
 
-    #self._keyboard = Window.request_keyboard(self._keyboard_closed, self)
-    #self._keyboard.bind(on_key_down=self._on_keyboard_down)
+    self.win = Window
+    self.win.bind(on_keyboard=self.keyboardHandler)
 
     self.leafLayout.bind(
           size=self._update_rect,
@@ -260,6 +265,15 @@ class LeafScreen(Screen):
   def _update_rect(self, instance, value):
     self.rect.pos = instance.pos
     self.rect.size = instance.size
+
+  def on_pre_leave(self):
+    self.win.unbind(on_keyboard=self.keyboardHandler)
+
+  def keyboardHandler(self, window, keycode1, keycode2, text, modifiers):
+    if keycode1 == systemBtnBack:
+      self.back()
+      return True
+    return False
 
   def readMode(self, *args):
     self.leafLayout.clear_widgets()
@@ -322,17 +336,6 @@ class LeafScreen(Screen):
         tree.down()
         sm.transition = SlideTransition(direction='right')
         sm.current = 'mainScreen'
-
-  """
-  def _on_keyboard_down(self, keyboard, keycode, text, modifiers):
-    if keycode[0] == systemBtnBack:
-      self.back()
-      return True
-    return False
-  def _keyboard_closed(self):
-    self._keyboard.unbind(on_key_down=self._on_keyboard_down)
-    self._keyboard = None
-  """
 
 sm = ScreenManager() 
 
