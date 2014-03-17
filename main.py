@@ -116,6 +116,8 @@ class MainScreen(Screen):
   def __init__(self, **kwargs):
     super(MainScreen, self).__init__(**kwargs)
 
+    #self.add_widget(Button(text='text')) #
+
     mainLayout = GridLayout(cols=1)
     # top
     btnBack = Button(text='Back', size_hint_x=0.1)
@@ -153,8 +155,8 @@ class MainScreen(Screen):
     self.rect.size = instance.size
 
   def on_pre_enter(self, *args):
-    self._keyboard = Window.request_keyboard(self._keyboard_closed, self)
-    self._keyboard.bind(on_key_down=self._on_keyboard_down)
+    #self._keyboard = Window.request_keyboard(self._keyboard_closed, self)
+    #self._keyboard.bind(on_key_down=self._on_keyboard_down)
     self.showTree()
     
   def showTree(self, *args):  
@@ -217,6 +219,7 @@ class MainScreen(Screen):
       self.contextMenu.dismiss()
       self.showTree()
 
+    """
   def _on_keyboard_down(self, keyboard, keycode, text, modifiers):
     if keycode[0] == systemBtnBack:
       self.goBack()
@@ -225,6 +228,7 @@ class MainScreen(Screen):
   def _keyboard_closed(self):
     self._keyboard.unbind(on_key_down=self._on_keyboard_down)
     self._keyboard = None
+    """
 
 class TextInputForScroll(TextInput):
   def on_text(self, *args):
@@ -242,8 +246,8 @@ class LeafScreen(Screen):
 
     self.add_widget(self.leafLayout)
 
-    self._keyboard = Window.request_keyboard(self._keyboard_closed, self)
-    self._keyboard.bind(on_key_down=self._on_keyboard_down)
+    #self._keyboard = Window.request_keyboard(self._keyboard_closed, self)
+    #self._keyboard.bind(on_key_down=self._on_keyboard_down)
 
     self.leafLayout.bind(
           size=self._update_rect,
@@ -319,6 +323,7 @@ class LeafScreen(Screen):
         sm.transition = SlideTransition(direction='right')
         sm.current = 'mainScreen'
 
+  """
   def _on_keyboard_down(self, keyboard, keycode, text, modifiers):
     if keycode[0] == systemBtnBack:
       self.back()
@@ -327,6 +332,7 @@ class LeafScreen(Screen):
   def _keyboard_closed(self):
     self._keyboard.unbind(on_key_down=self._on_keyboard_down)
     self._keyboard = None
+  """
 
 sm = ScreenManager() 
 
