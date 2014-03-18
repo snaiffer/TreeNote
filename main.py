@@ -15,10 +15,11 @@ color = {
 systemBtnBack = 8
 from kivy.utils import platform
 if platform() == 'android':
-  import android
-  android.map_key(android.KEYCODE_BACK, 1001)
-  global systemBtnBack
-  systemBtnBack = 1001
+  systemBtnBack = 27
+  #import android
+  #android.map_key(android.KEYCODE_BACK, 1001)
+  #global systemBtnBack
+  #systemBtnBack = 1001
 
 from tree import *
 tree = Tree()
@@ -170,9 +171,33 @@ class MainScreen(Screen):
 
   def keyboardHandler(self, window, keycode1, keycode2, text, modifiers):
     if keycode1 == systemBtnBack:
-      self.goBack()
+      if tree.reachRoot():
+        self.doExit()
+      else:  
+        self.goBack()
       return True
     return False
+
+  def doExit(self, *args):
+    self.contextMenu = ModalView(size_hint=(0.5, 0.5))
+    mainLayout = BoxLayout(
+        padding = 10,
+        spacing = 10,
+        pos_hint = {'center_x': 0.5, 'center_y': 0.5}, 
+        size_hint = (0.7, 0.8), 
+        orientation = 'vertical')
+    mainLayout.add_widget(Label(text='Exit?'))
+    chooserField = BoxLayout()
+    btnAddBranch = Button(text='yes')
+    chooserField.add_widget(btnAddBranch)
+    btnAddBranch.bind(on_press=App.stop) #
+    close = Button(text='no')
+    close.bind(on_release=self.contextMenu.dismiss)
+    chooserField.add_widget(close)
+    mainLayout.add_widget(chooserField)
+
+    self.contextMenu.add_widget(mainLayout)
+    self.contextMenu.open()
 
   def showTree(self, *args):  
     self.contentLayout.clear_widgets()
@@ -233,7 +258,6 @@ class MainScreen(Screen):
       self.textField.text = ''
       self.contextMenu.dismiss()
       self.showTree()
-
 
 class TextInputForScroll(TextInput):
   def on_text(self, *args):
