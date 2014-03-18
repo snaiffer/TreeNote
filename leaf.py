@@ -9,7 +9,7 @@ class Leaf():
   general module is necessary for working
   """
   def __init__(self, name=' ', text='', desc='', path=' '):
-    self.name = name
+    self.name = unicode(name)
     self.desc = ''
     if not os.path.isdir(dataPath):
       os.makedirs(dataPath)
@@ -35,7 +35,7 @@ class Leaf():
     " Prepare to remove the note "
     os.remove(self._path)
   def __str__(self):
-    return self.name + '\t desc: "' + self.desc + '"\n\t____text____:\n' + self.read()
+    return (self.name + '\t desc: "' + self.desc + '"\n\t____text____:\n' + self.read()).encode('utf8')
 
 
 if __name__ == '__main__':

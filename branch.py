@@ -9,8 +9,8 @@ class Branch():
   leaf module is necessary for working
   """
   def __init__(self, name='branch'):
-    self.name=name
-    self._children=[]
+    self.name = unicode(name)
+    self._children = []
   def add(self, item):
     self._children.append(item)
     return self._children[-1]
@@ -33,7 +33,7 @@ class Branch():
     self._cleaner(self._children[index])
     del self._children[index]
   def __str__(self):
-    return self.name
+    return self.name.encode('utf8')
     #return self.name + ': (with ' + str(len(self._children)) + ' children)'
 
 if __name__ == '__main__':
