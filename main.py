@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 timeOut_forContextMenu = 0.4
-btnHeightRate = 1.7           # more value less button of the list
+btnHeightRate = 1.3           # more value less button of the list
 color = {
     'btnLeaf':      [0.25,1,0.25,0.8], #[1,1,0,1], 
     'btnBranch':    [1,0.4,0.3,0.9],  #[1,0.4,0.3,1], 
@@ -54,7 +54,7 @@ from kivy.graphics import Color, Rectangle
 class ButtonTreeItem(Button):
   def __init__(self, num, outward, **kwargs):
     super(ButtonTreeItem, self).__init__(**kwargs)
-    self.size = (20, window_height/1.7) # 20 isn't change anything
+    self.size = (20, window_height/btnHeightRate) # 20 isn't change anything
     self.size_hint_y = None
     self.num = num
     self.context = False
