@@ -38,7 +38,7 @@ class Tree():
     else:
       raise AchiveRoot
   def getPath(self):
-    return str(self.__path)
+    return str(self.__path)[5:]
   def curItem(self):
     return self.__path.top()
   def save(self):
