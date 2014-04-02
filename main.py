@@ -190,7 +190,7 @@ class MainScreen(Screen):
     chooserField = BoxLayout()
     btnAddBranch = Button(text='yes')
     chooserField.add_widget(btnAddBranch)
-    btnAddBranch.bind(on_press=App.stop) #
+    btnAddBranch.bind(on_press=MainScreen.exit)
     close = Button(text='no')
     close.bind(on_release=self.contextMenu.dismiss)
     chooserField.add_widget(close)
@@ -198,6 +198,9 @@ class MainScreen(Screen):
 
     self.contextMenu.add_widget(mainLayout)
     self.contextMenu.open()
+  
+  def exit(*args):
+    raise wantExit
 
   def showTree(self, *args):  
     self.contentLayout.clear_widgets()
@@ -382,6 +385,13 @@ class TreeNoteApp(App):
     tree.save()
     pass
 
+class wantExit(Exception):
+  pass
+
 if __name__ == '__main__':
-    TreeNoteApp().run()
+  treeNote = TreeNoteApp()
+  try:
+    treeNote.run()
+  except wantExit:
+    treeNote.stop()
 
