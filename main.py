@@ -368,6 +368,7 @@ sm = ScreenManager()
 
 class TreeNoteApp(App):
   def build(self):
+    self.use_kivy_settings = False
     try:
       tree.restore()
     except XMLfileNotfound:
@@ -383,7 +384,9 @@ class TreeNoteApp(App):
 
   def on_stop(self):
     tree.save()
-    pass
+
+  def on_pause(self):
+    tree.save()
 
 class wantExit(Exception):
   pass
@@ -393,5 +396,6 @@ if __name__ == '__main__':
   try:
     treeNote.run()
   except wantExit:
-    treeNote.stop()
+    treeNote.on_pause()
+    # treeNote.stop()
 

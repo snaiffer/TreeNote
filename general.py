@@ -4,7 +4,9 @@
 import os
 
 progDir = os.path.dirname(os.path.realpath(__file__))
-dataPath = progDir + '/data'
+dataPath = progDir + '/../TreeNote_data'
+if not os.path.exists(dataPath):
+  os.makedirs(dataPath)
 structureFile = dataPath + '/structure.xml'
 
 def generate_UniqueName(fileName, path):
