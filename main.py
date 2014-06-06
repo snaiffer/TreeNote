@@ -51,7 +51,9 @@ from kivy.clock import Clock
 from kivy.graphics import Color, Rectangle
 
 
+
 class ButtonTreeItem(Button):
+  " A parent class for another classes of buttons "
   def __init__(self, num, outward, **kwargs):
     super(ButtonTreeItem, self).__init__(**kwargs)
     self.size = (20, window_height/btnHeightRate) # 20 isn't change anything
@@ -65,11 +67,10 @@ class ButtonTreeItem(Button):
       self.create_clock()
     return super(ButtonTreeItem, self).on_touch_down(touch) 
   def on_touch_up(self, touch):
-    if self.collide_point(*touch.pos):
-      self.delete_clock()
-      if self.context :
-        self.context = False
-        return True 
+    self.delete_clock()
+    if self.context :   # Context menu was opened
+      self.context = False
+      return True 
     return super(ButtonTreeItem, self).on_touch_up(touch) 
 
   def create_clock(self, *args):
@@ -264,7 +265,7 @@ class MainScreen(Screen):
 
 class TextInputForScroll(TextInput):
   def on_text(self, *args):
-    actual_height = (len(self._lines)+1) * (self.line_height+self._line_spacing)*1.1
+    actual_height = (len(self._lines)+1) * (self.line_height+self.line_spacing)*1.1
     self.height=actual_height
 
 class LeafScreen(Screen):
