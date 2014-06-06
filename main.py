@@ -13,11 +13,9 @@ color = {
     }
 
 systemBtnBack = 8
-"""
 from kivy import platform
 if platform == 'android':
   systemBtnBack = 27
-"""
   #import android
   #android.map_key(android.KEYCODE_BACK, 1001)
   #global systemBtnBack
@@ -65,10 +63,12 @@ class ButtonTreeItem(Button):
     self.outward = outward
 
   def on_touch_down(self, touch):
+    print('on_touch_down')
     if self.collide_point(*touch.pos):
       self.create_clock()
     return super(ButtonTreeItem, self).on_touch_down(touch) 
   def on_touch_up(self, touch):
+    print('on_touch_up')
     self.delete_clock()
     if self.context :   # Context menu was opened
       self.context = False
@@ -110,6 +110,7 @@ class ButtonBranch(ButtonTreeItem):
     self.background_color = color['btnBranch']
   def goHere(self, *args):  
     tree.upTo(self.num)
+    self.outward.showTree()
 
 class ButtonLeaf(ButtonTreeItem):
   def __init__(self, **kwargs):
