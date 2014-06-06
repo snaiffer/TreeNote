@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 " A module is for stack realisation "
 
 class Stack():
@@ -35,9 +35,9 @@ if __name__ == '__main__':
   testStack.push(3)
   testStack.push(2)
 
-  print testStack.getAll()
+  print( testStack.getAll() )
 
-  print testStack
+  print( testStack )
   while not testStack.isEmpty():
-    print testStack.pop()
-    print testStack
+    print( testStack.pop() )
+    print( testStack )

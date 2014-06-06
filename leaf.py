@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 " A module is for working with text note "
 
 from general import *
@@ -9,7 +9,7 @@ class Leaf():
   general module is necessary for working
   """
   def __init__(self, name=' ', text='', desc='', path=' '):
-    self.name = unicode(name)
+    self.name = name
     self.desc = ''
     if not os.path.isdir(dataPath):
       os.makedirs(dataPath)
@@ -21,39 +21,44 @@ class Leaf():
       self.write(text) 
   def read(self):
     " Read the note "
-    fd = open(self._path, 'rb')
-    return fd.read().decode('utf-8', 'xmlcharrefreplace')
+    with open(self._path, 'rb') as fd:
+      return fd.read().decode('utf8')
   def write(self, text):
     " Save to the note "
+    with open(self._path, 'wb') as fd:
+      fd.write(text.encode('utf8'))
+      self.desc = text[:15]
+    """  
     fd = open(self._path, 'wb')
     try:
-      fd.write(text.encode('utf-8', 'xmlcharrefreplace'))
+      fd.write(text)
       self.desc = text[:15]
     finally:  
       fd.close()
+    """  
   def prepare_del(self):
     " Prepare to remove the note "
     os.remove(self._path)
   def __str__(self):
-    return (self.name + '\t desc: "' + self.desc + '"\n\t____text____:\n' + self.read()).encode('utf8')
+    return (self.name + '\t desc: "' + self.desc + '"\n\t____text____:\n' + self.read())
 
 
 if __name__ == '__main__':
   test_str = 'leaf1_text'
-  print 'Test for creating and reading:'
+  print( 'Test for creating and reading:' )
   leaf1 = Leaf('leaf1', test_str)
   leaf2 = Leaf('leaf2')
   if leaf1.read() == 'leaf1_text':
-    print 'PASS'
+    print( 'PASS' )
   if leaf2.read() == '':
-    print 'PASS'
+    print( 'PASS' )
 
   test_str2 = 'New text'
-  print 'Test for rewritting:'
+  print( 'Test for rewritting:' )
   leaf1.write(test_str2)
   if leaf1.read() == test_str2:
-    print 'PASS'
-  print leaf1  
+    print( 'PASS' )
+  print( leaf1 )
 
   leaf1.prepare_del()
   leaf2.prepare_del()

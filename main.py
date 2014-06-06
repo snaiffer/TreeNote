@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 timeOut_forContextMenu = 0.4
 btnHeightRate = 1.3           # more value less button of the list
@@ -13,9 +13,11 @@ color = {
     }
 
 systemBtnBack = 8
-from kivy.utils import platform
-if platform() == 'android':
+"""
+from kivy import platform
+if platform == 'android':
   systemBtnBack = 27
+"""
   #import android
   #android.map_key(android.KEYCODE_BACK, 1001)
   #global systemBtnBack

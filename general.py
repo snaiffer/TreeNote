@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 " A module is for general settings "
 
 import os
@@ -18,6 +18,6 @@ def generate_UniqueName(fileName, path):
 
 
 if __name__ == '__main__':
-  print 'progDir = ' + progDir
-  print 'dataPath = ' + dataPath
-  print 'structureFile = ' + structureFile
+  print( 'progDir = ' + progDir )
+  print( 'dataPath = ' + dataPath )
+  print( 'structureFile = ' + structureFile )

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 " A module is for realising tree structure "
 
 from leaf import *
@@ -9,7 +9,7 @@ class Branch():
   leaf module is necessary for working
   """
   def __init__(self, name='branch'):
-    self.name = unicode(name)
+    self.name = name
     self._children = []
   def add(self, item):
     self._children.append(item)
@@ -33,7 +33,7 @@ class Branch():
     self._cleaner(self._children[index])
     del self._children[index]
   def __str__(self):
-    return self.name.encode('utf8')
+    return self.name
     #return self.name + ': (with ' + str(len(self._children)) + ' children)'
 
 if __name__ == '__main__':
@@ -44,14 +44,14 @@ if __name__ == '__main__':
   branch.add(branch1)
   addedB = branch.add(Branch(name='branch4'))
 
-  print branch
-  print '==================\n'
+  print( branch )
+  print( '==================\n' )
 
   if branch.get(0).get(0).name == 'branch2':
-    print 'PASS'
+    print( 'PASS' )
   branch.remove(0)  
   if branch.get(0).name == 'branch4':
-    print 'PASS'
+    print( 'PASS' )
   if addedB.name == 'branch4':
-    print 'PASS'
+    print( 'PASS' )
 

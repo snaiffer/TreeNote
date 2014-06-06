@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 " A module is for representating and working with tree structure "
 
 from stack import *
@@ -10,7 +10,7 @@ from general import *
 def print_all(item, iterNum=0):
   " print all tree structure "
   indent='  '*iterNum
-  print str(indent) + str(item)
+  print( str(indent) + str(item) )
   if isinstance(item, Branch):
     if item.get() == []:
       return
@@ -91,10 +91,10 @@ if __name__ == '__main__':
   tree = Tree()
   try:
     tree.restore()
-    print tree.getPath()
+    print( tree.getPath() )
     print_all(tree.curItem())
   except XMLfileNotfound:
-    print "Error: XML file isn't found"
+    print( "Error: XML file isn't found" )
 
   """
   tree.curItem().add(Branch('branch1'))
@@ -102,30 +102,30 @@ if __name__ == '__main__':
   tree.curItem().add(Leaf('leaf1'))
   print_all(tree.curItem())
 
-  print '\n\t Go up to branch1\n'
+  print( '\n\t Go up to branch1\n' )
   tree.upTo(0)
   tree.curItem().add(Leaf('leaf2'))
   tree.curItem().add(Leaf('leaf3'))
   tree.curItem().add(Branch('branch3'))
   print_all(tree.curItem())
 
-  print '\n\t Go down\n'
+  print( '\n\t Go down\n' )
   tree.down()
   print_all(tree.curItem())
 
-  print '\n\t Fill in leaf1\n'
+  print( '\n\t Fill in leaf1\n' )
   tree.upTo(2)
   tree.curItem().write('Hello! Im here!')
   tree.down()
   print_all(tree.curItem())
 
-  print '\n\t Remove leaf2\n'
+  print( '\n\t Remove leaf2\n' )
   tree.upTo(0)
   tree.curItem().remove(0)
   tree.down()
   print_all(tree.curItem())
 
-  print '\n\t Remove branch1\n'
+  print( '\n\t Remove branch1\n' )
   tree.curItem().remove(0)
   print_all(tree.curItem())
 
