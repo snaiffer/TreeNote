@@ -63,12 +63,10 @@ class ButtonTreeItem(Button):
     self.outward = outward
 
   def on_touch_down(self, touch):
-    print('on_touch_down')
     if self.collide_point(*touch.pos):
       self.create_clock()
     return super(ButtonTreeItem, self).on_touch_down(touch) 
   def on_touch_up(self, touch):
-    print('on_touch_up')
     self.delete_clock()
     if self.context :   # Context menu was opened
       self.context = False

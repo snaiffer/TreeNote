@@ -7,6 +7,9 @@ But target of this app is android devices.
 
 
 ========
+Python3.3
+Kivy v1.8.0
+
 for compilation to android:
 Note: you need setup python-for-android
 
@@ -14,4 +17,4 @@ Note: you need setup python-for-android
 android avd
 ) package to .apk
 cd ~/temp/py/kivy/python-for-android/dist/default
-./build.py --dir /home/snaiffer/temp/TreeNote --name "TreeNote" --package snaif.kivy.TreeNote --orientation "sensor" --version 1.1.22 debug installd
+./build.py --dir /home/snaiffer/temp/TreeNote --name "TreeNote" --package snaif.kivy.TreeNote --orientation "sensor" --icon=/home/snaiffer/temp/TreeNote/tree.png --version 1.1.40 debug installd
